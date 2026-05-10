@@ -2,13 +2,11 @@
 // CONFIG
 // ==============================
 const SUPABASE_URL = "https://pqtbmnqsftqyvkhoszyy.supabase.co";
-
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxdGJtbnFzZnRxeXZraG9zenl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU2NjEyMDgsImV4cCI6MjA4MTIzNzIwOH0.fS2Wp0lp-GEJXVUpfhcaFRQzxtOY7nhJNjTlpkRxQtA";
-
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxdGJtbnFzZnRxeXZraG9zenl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU2NjEyMDgsImV4cCI6MjA4MTIzNzIwOH0.fS2Wp0lp-G8xjqM8UxzxF_KqE_hVeQKUU8jI52nYCRw";
 const TABLE = "pistachio1";
 
 // ==============================
-// HITOS
+// HITOS (MILESTONES)
 // ==============================
 const hitos = [
   { fecha: '2023-10-02', texto: 'Op. C23' },
@@ -22,19 +20,29 @@ const hitos = [
 let globalData = [];
 let activeColumns = ["usdlb_std"];
 let chart = null;
+let resizeObserver = null;
+let resizeTimeout = null;
+
+// ==============================
+// DEBOUNCE UTILITY
+// ==============================
+function debounce(func, delay) {
+  return function (...args) {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => func.apply(this, args), delay);
+  };
+}
 
 // ==============================
 // INIT
 // ==============================
 document.addEventListener("DOMContentLoaded", async () => {
-
   if (typeof Chart === "undefined") {
     console.error("Chart.js no cargado");
     return;
   }
 
   showLoadingState();
-
   await fetchData();
 
   if (!globalData.length) {
@@ -44,11 +52,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   setupTickers();
   setupChart();
+  setupResizeObserver();
   updateUI();
 });
 
 // ==============================
-// FETCH
+// CLEANUP ON UNLOAD
+// ==============================
+window.addEventListener("unload", () => {
+  if (resizeObserver) {
+    resizeObserver.disconnect();
+  }
+  if (chart) {
+    chart.destroy();
+  }
+  clearTimeout(resizeTimeout);
+});
+
+// ==============================
+// FETCH DATA
 // ==============================
 async function fetchData() {
   try {
@@ -84,7 +106,7 @@ async function fetchData() {
 }
 
 // ==============================
-// UI
+// UI LOADING STATE
 // ==============================
 function showLoadingState() {
   document.getElementById("productTitle").textContent = "Loading...";
@@ -93,49 +115,75 @@ function showLoadingState() {
 }
 
 // ==============================
-// TICKERS
+// SETUP TICKERS
 // ==============================
 function setupTickers() {
   const tickers = document.querySelectorAll(".ticker");
 
-  tickers.forEach(t => {
-
+  tickers.forEach((t, index) => {
     const labelEl = t.querySelector(".label");
 
     if (labelEl && t.dataset.name) {
       labelEl.textContent = t.dataset.name;
     }
 
-    t.addEventListener("click", () => {
-
-      const col = t.dataset.column;
-
-      if (activeColumns.includes(col)) {
-        activeColumns = activeColumns.filter(c => c !== col);
-        t.classList.remove("active");
-      } else {
-        activeColumns.push(col);
-        t.classList.add("active");
+    // Keyboard navigation
+    t.addEventListener("keydown", (e) => {
+      let nextIndex = index;
+      
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        nextIndex = (index + 1) % tickers.length;
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        nextIndex = (index - 1 + tickers.length) % tickers.length;
       }
-
-      if (activeColumns.length === 0) {
-        activeColumns = [col];
-        t.classList.add("active");
+      
+      if (nextIndex !== index) {
+        tickers[nextIndex].focus();
       }
+    });
 
-      updateUI();
+    // Click handler
+    t.addEventListener("click", () => toggleTicker(t));
+    t.addEventListener("keypress", (e) => {
+      if (e.key === " " || e.key === "Enter") {
+        e.preventDefault();
+        toggleTicker(t);
+      }
     });
   });
 }
 
 // ==============================
-// SMA
+// TOGGLE TICKER
+// ==============================
+function toggleTicker(ticker) {
+  const col = ticker.dataset.column;
+
+  if (activeColumns.includes(col)) {
+    activeColumns = activeColumns.filter(c => c !== col);
+    ticker.classList.remove("active");
+  } else {
+    activeColumns.push(col);
+    ticker.classList.add("active");
+  }
+
+  if (activeColumns.length === 0) {
+    activeColumns = [col];
+    ticker.classList.add("active");
+  }
+
+  updateUI();
+}
+
+// ==============================
+// CALCULATE SMA (SIMPLE MOVING AVERAGE)
 // ==============================
 function calculateSMA(values, period = 90) {
   const result = [];
 
   for (let i = 0; i < values.length; i++) {
-
     if (i < period - 1) {
       result.push(null);
       continue;
@@ -159,7 +207,7 @@ function calculateSMA(values, period = 90) {
 }
 
 // ==============================
-// CHART
+// SETUP CHART
 // ==============================
 function setupChart() {
   const ctx = document.getElementById("currencyChart").getContext("2d");
@@ -174,18 +222,35 @@ function setupChart() {
       responsive: true,
       maintainAspectRatio: false,
       interaction: { mode: 'nearest', intersect: false },
-
       plugins: {
         legend: { display: false },
-        annotation: { annotations: {} }
+        annotation: { annotations: {} },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          titleColor: '#fff',
+          bodyColor: '#fff',
+          borderColor: 'rgba(255, 255, 255, 0.2)',
+          borderWidth: 1,
+          padding: 10,
+          displayColors: true,
+          callbacks: {
+            label: function(context) {
+              let label = context.dataset.label || '';
+              if (label) {
+                label += ': ';
+              }
+              if (context.parsed.y !== null) {
+                label += context.parsed.y.toFixed(2);
+              }
+              return label;
+            }
+          }
+        }
       },
-
       scales: {
         x: {
           grid: { display: false }
         },
-
-        // EJE DERECHO (PRECIO)
         y: {
           position: "right",
           grace: "30%",
@@ -194,8 +259,6 @@ function setupChart() {
             callback: v => Number(v).toFixed(2)
           }
         },
-
-        // EJE IZQUIERDO (STOCK)
         yLeft: {
           position: "left",
           min: 0,
@@ -212,6 +275,22 @@ function setupChart() {
       }
     }
   });
+}
+
+// ==============================
+// SETUP RESIZE OBSERVER
+// ==============================
+function setupResizeObserver() {
+  const chartWrapper = document.querySelector('.chart-wrapper');
+  
+  const debouncedUpdate = debounce(() => {
+    if (chart) {
+      chart.resize();
+    }
+  }, 250);
+
+  resizeObserver = new ResizeObserver(debouncedUpdate);
+  resizeObserver.observe(chartWrapper);
 }
 
 // ==============================
@@ -244,7 +323,7 @@ function updateChart() {
   chart.data.labels = filtered.map(d => d.fecha);
   chart.data.datasets = [];
 
-  // COLUMNAS STOCK
+  // STOCK DATA
   const stockValues = filtered.map(d => {
     const v = Number(d.stock_MT);
     return isNaN(v) ? null : v;
@@ -263,8 +342,8 @@ function updateChart() {
     order: 2
   });
 
+  // ACTIVE COLUMNS
   activeColumns.forEach((col, i) => {
-
     const ticker = document.querySelector(`.ticker[data-column="${col}"]`);
     const label = ticker ? ticker.dataset.name : col;
 
@@ -279,7 +358,7 @@ function updateChart() {
       borderWidth: 1.5,
       tension: 0.2,
       pointRadius: 0,
-      borderColor: i === 0 ? "#12151c" : "#8B0000"
+      borderColor: i === 0 ? "#12151c" : "#dc2626"
     });
 
     const sma = calculateSMA(values, 90);
@@ -293,13 +372,12 @@ function updateChart() {
       pointRadius: 0,
       borderColor: "rgba(0,0,0,0.35)"
     });
-
   });
 
+  // ANNOTATIONS (MILESTONES)
   const annotations = {};
 
   hitos.forEach((h, i) => {
-
     const point = sorted.find(d => d.fecha === h.fecha);
     if (!point) return;
 
@@ -310,7 +388,7 @@ function updateChart() {
       type: "line",
       xMin: h.fecha,
       xMax: h.fecha,
-      borderColor: "rgba(139,0,0,0.25)",
+      borderColor: "rgba(220,38,38,0.25)",
       borderWidth: 1
     };
 
@@ -318,7 +396,7 @@ function updateChart() {
       type: "point",
       xValue: h.fecha,
       yValue: y,
-      backgroundColor: "#8B0000",
+      backgroundColor: "#dc2626",
       radius: 4
     };
 
@@ -329,12 +407,11 @@ function updateChart() {
       content: `${h.texto} · ${y.toFixed(2)}`,
       backgroundColor: "rgba(255,255,255,0)",
       borderWidth: 0,
-      color: "#8B0000",
+      color: "#dc2626",
       font: { size: 10 },
       padding: 4,
       yAdjust: -12
     };
-
   });
 
   chart.options.plugins.annotation = {
@@ -346,7 +423,7 @@ function updateChart() {
 }
 
 // ==============================
-// UI UPDATE
+// UPDATE UI
 // ==============================
 function updateUI() {
   if (!globalData.length) return;
@@ -370,18 +447,17 @@ function updateUI() {
   const change = ((value - prevValue) / prevValue) * 100;
   const isPositive = change >= 0;
 
-  document.getElementById("productChange").textContent =
-    `${isPositive ? "▲" : "▼"} ${Math.abs(change).toFixed(2)}%`;
-
-  document.getElementById("productChange").className =
-    `change ${isPositive ? "down" : "up"}`;
+  const changeEl = document.getElementById("productChange");
+  changeEl.textContent = `${isPositive ? "▲" : "▼"} ${Math.abs(change).toFixed(2)}%`;
+  changeEl.className = `change ${isPositive ? "down" : "up"}`;
 }
 
 // ==============================
-// RESET ZOOM
+// KEYBOARD SHORTCUTS
 // ==============================
 document.addEventListener("keydown", (e) => {
-  if (e.key === "r" && chart) {
+  // Reset zoom on 'r' key
+  if (e.key === "r" && e.ctrlKey === false && e.metaKey === false && chart) {
     chart.resetZoom();
   }
 });

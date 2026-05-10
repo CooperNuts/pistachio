@@ -2,133 +2,116 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  
   <title>Pistachio Price Insights</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
-
   <meta name="description" content="Indicative pistachio price signals and market trends for California and Spain markets.">
 
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1"></script>
 
   <link rel="icon" href="/PISTACHIODRAWING.jpg" type="image/x-icon">
+  <link rel="apple-touch-icon" href="/android-chrome-512x512.png">
 </head>
 
 <body>
 
-<header class="header">
-  <div class="header-top">
-    <div>
+<header class="header" role="banner">
+  <div class="header-content">
+    <div class="header-text">
       <h1>Pistachio Price Insights</h1>
-      <h2 class="subtitle">From data to decisions</h2>
+      <p class="subtitle">From data to decisions</p>
     </div>
   </div>
 </header>
 
-<main>
-  <section class="content">
-
+<main role="main" class="main-content">
+  <section class="chart-section" aria-labelledby="productTitle">
     <div class="card">
-
-      <h2 id="productTitle"></h2>
-      <div class="price" id="productPrice"></div>
-      <div class="change" id="productChange"></div>
+      <h2 id="productTitle" class="product-title"></h2>
+      <div class="price-container">
+        <div class="price" id="productPrice"></div>
+        <div class="change" id="productChange" role="status" aria-live="polite"></div>
+      </div>
 
       <div class="chart-wrapper">
-
-        <div class="floating-tickers">
-
-          <div class="ticker active" data-column="usdlb_std" data-name="Std. Size USX1 USDLB FAS Calif.">
+        <div class="floating-tickers" role="tablist" aria-label="Ticker selector">
+          <div class="ticker active" data-column="usdlb_std" data-name="Std. Size USX1 USDLB FAS Calif." role="tab" tabindex="0">
             <span class="label"></span>
           </div>
 
-          <div class="ticker" data-column="usdlb_large" data-name="Large Size USX1 USDLB FAS Calif.">
+          <div class="ticker" data-column="usdlb_large" data-name="Large Size USX1 USDLB FAS Calif." role="tab" tabindex="-1">
             <span class="label"></span>
           </div>
 
-          <div class="ticker" data-column="usdlb_kernel" data-name="Kernel W80 USX1 USDLB FAS Calif.">
+          <div class="ticker" data-column="usdlb_kernel" data-name="Kernel W80 USX1 USDLB FAS Calif." role="tab" tabindex="-1">
             <span class="label"></span>
           </div>
 
-          <div class="ticker" data-column="eurkg_es2125" data-name="ES 21/25 EURKG EXW Toledo">
+          <div class="ticker" data-column="eurkg_es2125" data-name="ES 21/25 EURKG EXW Toledo" role="tab" tabindex="-1">
             <span class="label"></span>
           </div>
 
-          <div class="ticker" data-column="eurkg_eskernel" data-name="ES Kernel EURKG EXW Toledo">
+          <div class="ticker" data-column="eurkg_eskernel" data-name="ES Kernel EURKG EXW Toledo" role="tab" tabindex="-1">
             <span class="label"></span>
           </div>
-
         </div>
 
-        <canvas id="currencyChart"></canvas>
-
+        <canvas id="currencyChart" role="img" aria-label="Pistachio price chart"></canvas>
       </div>
     </div>
-
   </section>
 
-  <!-- =========================
-       TARJETAS EN MISMA FILA
-  ========================== -->
-  <section class="dashboard-cards">
-
-    <!-- CARD 1 -->
+  <section class="dashboard-cards" aria-label="Market resources">
     <div class="report-card">
-
       <div class="report-label">STANDARDS</div>
-
-      <div class="report-title">
+      <h3 class="report-title">
         APG US Standards for Grades of Pistachio Nuts
-      </div>
-
-      <div class="report-desc">
+      </h3>
+      <p class="report-desc">
         Official quality grading standards for pistachio nuts published by the American Pistachio Growers.
-      </div>
-
+      </p>
       <a class="report-button"
          href="/APG-US-Standards-for-Grades-of-Pistachio-Nuts_Brochure_AUG-26-15.zip_.pdf"
-         target="_blank">
-         View
+         target="_blank"
+         rel="noopener noreferrer">
+        View Document
       </a>
-
     </div>
 
-    <!-- CARD 2 (EXPORT) -->
-    <div class="report-card export-card">
-
+    <div class="report-card">
       <div class="report-label">Export</div>
-
-      <div class="report-title">
+      <h3 class="report-title">
         Administrative Committee for Pistachios - PEAR
-      </div>
-
-      <div class="report-desc">
-        Pistachio Export Aflatoxin Reporting (PEAR) Program for exports to the European Union. Program Manual 2025
-      </div>
-
+      </h3>
+      <p class="report-desc">
+        Pistachio Export Aflatoxin Reporting (PEAR) Program for exports to the European Union. Program Manual 2025–2026.
+      </p>
       <a class="report-button"
          href="PEAR-Program-Manual-2025-2026.pdf"
-         target="_blank">
-         View
+         target="_blank"
+         rel="noopener noreferrer">
+        View Document
       </a>
-
     </div>
-
   </section>
 
-  </main>
+</main>
 
-  <footer class="footer">
-  <p>© 2025 · E. Lagarda</p>
-  
-  <p class="disclaimer"> The prices displayed on this website are provided solely as indicative price signals reflecting general market conditions and are intended for statistical and informational purposes only. Under no circumstances shall they be construed as firm, binding, or contractual offers. The indicated prices are derived from information gathered from various publicly available and industry-relevant sources. While reasonable efforts are made to ensure accuracy, no representation or warranty is given as to the completeness, reliability, or timeliness of such information. These prices do not take into account specific conditions related to product availability, logistics, contractual volumes, quality specifications, or individual payment terms, all of which may have a material impact on actual commercial offers. I love pistachios, not sure about the vice-versa.
+<footer class="footer" role="contentinfo">
+  <p>&copy; 2025 · E. Lagarda</p>
+  <p class="disclaimer">
+    The prices displayed on this website are provided solely as indicative price signals reflecting general market conditions and are intended for statistical and informational purposes only. These prices do not constitute an offer to buy or sell, and actual market prices may vary significantly based on quality, location, timing, and other market factors. Users should conduct their own market research and consult with industry professionals before making any commercial decisions.
   </p>
-  </footer>
-  
-  <script src="app.js" defer></script>
+</footer>
 
-  </body>
-  </html>
+<script src="app.js" defer></script>
+
+</body>
+</html>
