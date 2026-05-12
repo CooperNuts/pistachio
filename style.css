@@ -68,6 +68,8 @@ body {
   background: var(--color-bg-light);
   color: var(--color-text-main);
   line-height: 1.6;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -117,6 +119,7 @@ p {
    HEADER
 ============================== */
 .header {
+  width: 100%;
   padding: 24px 32px 0 32px;
   background: var(--color-bg-light);
 }
@@ -128,7 +131,8 @@ p {
 }
 
 .header-content {
-  max-width: 1400px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   text-align: center;
 }
@@ -155,7 +159,8 @@ p {
    MAIN CONTENT
 ============================== */
 .main-content {
-  max-width: 1400px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   padding: 24px 32px;
 }
@@ -171,6 +176,7 @@ p {
 ============================== */
 .chart-section {
   margin-bottom: 48px;
+  width: 100%;
 }
 
 @media (max-width: 480px) {
@@ -453,6 +459,7 @@ p {
    FOOTER
 ============================== */
 .footer {
+  width: 100%;
   margin-top: 80px;
   padding: 48px 32px 32px;
   text-align: center;
@@ -480,6 +487,7 @@ p {
 .disclaimer {
   font-size: 0.9rem;
   color: var(--color-text-muted);
+  max-width: 100%;
 }
 
 @media (max-width: 480px) {
