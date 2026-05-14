@@ -20,6 +20,10 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1"></script>
 
+  <script>
+    Chart.register(window['chartjs-plugin-annotation']);
+  </script>
+
   <link rel="icon" href="/PISTACHIODRAWING.jpg" type="image/x-icon" />
 
   <style>
@@ -82,15 +86,32 @@
         0 12px 32px rgba(0,0,0,0.03);
     }
 
+    /* =========================
+       TOP SECTION
+    ========================= */
+
+    .price-container {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: flex-start;
+
+      gap: 40px;
+
+      margin-bottom: 34px;
+    }
+
+    .price-left {
+      flex-shrink: 0;
+    }
+
     .product-title {
       font-size: 18px;
       font-weight: 600;
       color: #374151;
       margin-bottom: 18px;
-    }
-
-    .price-container {
-      margin-bottom: 40px;
     }
 
     .price {
@@ -109,32 +130,46 @@
     }
 
     .top-bar {
+
+      flex: 1;
+
       display: flex;
+
       justify-content: flex-end;
-      margin-bottom: 30px;
+
+      padding-top: 6px;
     }
 
     .chart-actions {
+
       display: grid;
+
       grid-template-columns: repeat(5, 1fr);
-      gap: 14px;
+
+      gap: 10px;
     }
 
+    /* =========================
+       TICKER CARDS
+    ========================= */
+
     .ticker-card {
-      width: 160px;
-      min-height: 90px;
+
+      width: 128px;
+
+      min-height: 74px;
 
       background: rgba(255,255,255,0.92);
 
       border: 1px solid rgba(0,0,0,0.04);
 
-      border-radius: 24px;
+      border-radius: 20px;
 
-      padding: 18px;
+      padding: 14px;
 
       display: flex;
       align-items: flex-start;
-      gap: 12px;
+      gap: 10px;
 
       cursor: pointer;
 
@@ -149,6 +184,7 @@
     }
 
     .ticker-card:hover {
+
       transform: translateY(-2px);
 
       box-shadow:
@@ -161,11 +197,11 @@
     }
 
     .ticker-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 999px;
       background: #111827;
-      margin-top: 6px;
+      margin-top: 5px;
       flex-shrink: 0;
     }
 
@@ -188,33 +224,50 @@
     .ticker-content {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     .ticker-name {
-      font-size: 13px;
-      line-height: 1.35;
+
+      font-size: 11px;
+
+      line-height: 1.3;
+
       color: #6b7280;
+
       font-weight: 600;
     }
 
     .ticker-value {
-      font-size: 20px;
+
+      font-size: 17px;
+
       line-height: 1;
+
       font-weight: 800;
+
       letter-spacing: -0.04em;
+
       color: #111827;
     }
 
+    /* =========================
+       CHART
+    ========================= */
+
     .chart-wrapper {
       position: relative;
-      padding-top: 10px;
+      height: 640px;
     }
 
     #currencyChart {
-      width: 100%;
-      height: 640px;
+      width: 100% !important;
+      height: 100% !important;
     }
+
+    /* =========================
+       RESOURCE CARDS
+    ========================= */
 
     .dashboard-cards {
       margin-top: 32px;
@@ -291,6 +344,10 @@
       opacity: 0.92;
     }
 
+    /* =========================
+       FOOTER
+    ========================= */
+
     .footer {
       max-width: 1440px;
       margin: 0 auto;
@@ -305,10 +362,24 @@
       margin-top: 12px;
     }
 
-    @media (max-width: 1280px) {
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 1024px) {
+
+      .price-container {
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .top-bar {
+        width: 100%;
+      }
 
       .chart-actions {
         grid-template-columns: repeat(2, 1fr);
+        width: 100%;
       }
 
       .ticker-card {
@@ -333,7 +404,7 @@
       }
 
       .price {
-        font-size: 60px;
+        font-size: 54px;
       }
 
       .card {
@@ -343,18 +414,13 @@
 
       .chart-actions {
         grid-template-columns: 1fr;
-        width: 100%;
-      }
-
-      .ticker-card {
-        width: 100%;
       }
 
       .dashboard-cards {
         grid-template-columns: 1fr;
       }
 
-      #currencyChart {
+      .chart-wrapper {
         height: 480px;
       }
     }
@@ -381,95 +447,102 @@
 
     <div class="card">
 
-      <h2 id="productTitle" class="product-title"></h2>
-
       <div class="price-container">
-        <div class="price" id="productPrice"></div>
-        <div
-          class="change"
-          id="productChange"
-          role="status"
-          aria-live="polite"
-        ></div>
-      </div>
 
-      <div class="top-bar">
+        <div class="price-left">
 
-        <div class="chart-actions">
+          <h2 id="productTitle" class="product-title"></h2>
+
+          <div class="price" id="productPrice"></div>
 
           <div
-            class="ticker-card active"
-            data-column="usdlb_std"
-            data-name="Std. Size USX1 USDLB FAS Calif."
-            role="tab"
-            tabindex="0"
-          >
-            <div class="ticker-dot"></div>
+            class="change"
+            id="productChange"
+            role="status"
+            aria-live="polite"
+          ></div>
 
-            <div class="ticker-content">
-              <span class="ticker-name">Std. Size</span>
-              <span class="ticker-value"></span>
+        </div>
+
+        <div class="top-bar">
+
+          <div class="chart-actions">
+
+            <div
+              class="ticker-card active"
+              data-column="usdlb_std"
+              data-name="Std. Size USX1 USDLB FAS Calif."
+              role="tab"
+              tabindex="0"
+            >
+              <div class="ticker-dot"></div>
+
+              <div class="ticker-content">
+                <span class="ticker-name">Std. Size</span>
+                <span class="ticker-value"></span>
+              </div>
             </div>
-          </div>
 
-          <div
-            class="ticker-card"
-            data-column="usdlb_large"
-            data-name="Large Size USX1 USDLB FAS Calif."
-            role="tab"
-            tabindex="-1"
-          >
-            <div class="ticker-dot blue"></div>
+            <div
+              class="ticker-card"
+              data-column="usdlb_large"
+              data-name="Large Size USX1 USDLB FAS Calif."
+              role="tab"
+              tabindex="-1"
+            >
+              <div class="ticker-dot blue"></div>
 
-            <div class="ticker-content">
-              <span class="ticker-name">Large Size</span>
-              <span class="ticker-value"></span>
+              <div class="ticker-content">
+                <span class="ticker-name">Large Size</span>
+                <span class="ticker-value"></span>
+              </div>
             </div>
-          </div>
 
-          <div
-            class="ticker-card"
-            data-column="usdlb_kernel"
-            data-name="Kernel W80 USX1 USDLB FAS Calif."
-            role="tab"
-            tabindex="-1"
-          >
-            <div class="ticker-dot green"></div>
+            <div
+              class="ticker-card"
+              data-column="usdlb_kernel"
+              data-name="Kernel W80 USX1 USDLB FAS Calif."
+              role="tab"
+              tabindex="-1"
+            >
+              <div class="ticker-dot green"></div>
 
-            <div class="ticker-content">
-              <span class="ticker-name">Kernel W80</span>
-              <span class="ticker-value"></span>
+              <div class="ticker-content">
+                <span class="ticker-name">Kernel W80</span>
+                <span class="ticker-value"></span>
+              </div>
             </div>
-          </div>
 
-          <div
-            class="ticker-card"
-            data-column="eurkg_es2125"
-            data-name="ES 21/25 EURKG EXW Toledo"
-            role="tab"
-            tabindex="-1"
-          >
-            <div class="ticker-dot purple"></div>
+            <div
+              class="ticker-card"
+              data-column="eurkg_es2125"
+              data-name="ES 21/25 EURKG EXW Toledo"
+              role="tab"
+              tabindex="-1"
+            >
+              <div class="ticker-dot purple"></div>
 
-            <div class="ticker-content">
-              <span class="ticker-name">ES 21/25</span>
-              <span class="ticker-value"></span>
+              <div class="ticker-content">
+                <span class="ticker-name">ES 21/25</span>
+                <span class="ticker-value"></span>
+              </div>
             </div>
-          </div>
 
-          <div
-            class="ticker-card"
-            data-column="eurkg_eskernel"
-            data-name="ES Kernel EURKG EXW Toledo"
-            role="tab"
-            tabindex="-1"
-          >
-            <div class="ticker-dot orange"></div>
+            <div
+              class="ticker-card"
+              data-column="eurkg_eskernel"
+              data-name="ES Kernel EURKG EXW Toledo"
+              role="tab"
+              tabindex="-1"
+            >
+              <div class="ticker-dot orange"></div>
 
-            <div class="ticker-content">
-              <span class="ticker-name">ES Kernel</span>
-              <span class="ticker-value"></span>
+              <div class="ticker-content">
+                <span class="ticker-name">ES Kernel</span>
+                <span class="ticker-value"></span>
+              </div>
             </div>
+
           </div>
 
         </div>
