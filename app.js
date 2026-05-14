@@ -42,7 +42,9 @@ let resizeTimeout = null;
 // DEBOUNCE
 // ==============================
 function debounce(func, delay) {
+
   return function (...args) {
+
     clearTimeout(resizeTimeout);
 
     resizeTimeout = setTimeout(() => {
@@ -112,6 +114,7 @@ async function fetchData() {
       .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
   } catch (err) {
+
     console.error("Fetch error:", err);
   }
 }
@@ -319,6 +322,7 @@ function setupChart() {
           },
 
           callbacks: {
+
             label: function(context) {
 
               let label = context.dataset.label || "";
@@ -365,7 +369,7 @@ function setupChart() {
 
           position: "right",
 
-          grace: "20%",
+          grace: "10%",
 
           grid: {
             color: "rgba(0,0,0,0.05)",
@@ -409,7 +413,7 @@ function setupChart() {
 
           ticks: {
 
-            color: "#d1d5db",
+            color: "#cbd5e1",
 
             stepSize: 100000,
 
@@ -484,13 +488,17 @@ function updateChart() {
 
     yAxisID: "yLeft",
 
-    backgroundColor: "rgba(17,24,39,0.02)",
+    backgroundColor: "rgba(17,24,39,0.08)",
 
-    borderWidth: 0,
+    borderColor: "rgba(17,24,39,0.10)",
 
-    barPercentage: 0.5,
+    borderWidth: 0.6,
 
-    categoryPercentage: 0.7,
+    borderRadius: 2,
+
+    barPercentage: 0.72,
+
+    categoryPercentage: 0.92,
 
     order: 2
   });
@@ -627,10 +635,7 @@ function updateChart() {
     };
   });
 
-  chart.options.plugins.annotation = {
-    annotations,
-    drawTime: "afterDatasetsDraw"
-  };
+  chart.options.plugins.annotation.annotations = annotations;
 
   chart.update();
 }
