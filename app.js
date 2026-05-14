@@ -111,6 +111,7 @@ async function fetchData() {
 
     globalData = data
       .filter(item => item.fecha)
+      .filter(item => !isNaN(new Date(item.fecha)))
       .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
   } catch (err) {
@@ -462,16 +463,35 @@ function updateChart() {
   if (!chart || !globalData.length) return;
 
   const sorted = [...globalData]
+    .filter(d => d.fecha)
+    .filter(d => !isNaN(new Date(d.fecha)))
     .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
-  chart.data.labels = sorted.map(d => d.fecha);
+  // ==========================
+  // LAST 4 YEARS ONLY
+  // ==========================
+  const lastDate = new Date(
+    sorted[sorted.length - 1].fecha
+  );
+
+  const minDate = new Date(lastDate);
+
+  minDate.setFullYear(
+    minDate.getFullYear() - 4
+  );
+
+  const filtered = sorted.filter(d => {
+    return new Date(d.fecha) >= minDate;
+  });
+
+  chart.data.labels = filtered.map(d => d.fecha);
 
   chart.data.datasets = [];
 
   // ==========================
   // STOCK BARS
   // ==========================
-  const stockValues = sorted.map(d => {
+  const stockValues = filtered.map(d => {
 
     const value = Number(d.stock_MT);
 
@@ -504,7 +524,7 @@ function updateChart() {
   });
 
   // ==========================
-  // MAIN DATASET
+  // MAIN DATASETS
   // ==========================
   activeColumns.forEach(col => {
 
@@ -516,7 +536,7 @@ function updateChart() {
       ? ticker.dataset.name
       : col;
 
-    const values = sorted.map(d => {
+    const values = filtered.map(d => {
 
       const value = Number(d[col]);
 
@@ -542,9 +562,9 @@ function updateChart() {
       order: 1
     });
 
-    // ========================
+    // ==========================
     // SMA
-    // ========================
+    // ==========================
     const sma = calculateSMA(values, 90);
 
     chart.data.datasets.push({
