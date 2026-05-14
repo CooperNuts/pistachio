@@ -4,7 +4,7 @@
 const SUPABASE_URL = "https://pqtbmnqsftqyvkhoszyy.supabase.co";
 
 const SUPABASE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJw..." // <- tu key completa aquí
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJwxdGJtbnFzZnRxeXZraG9zenl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU2NjEyMDgsImV4cCI6MjA4MTIzNzIwOH0.fS2Wp0lp-GEJXVUpfhcaFRQzxtOY7nhJNjTlpkRxQtA";
 
 const TABLE = "pistachio1";
 
@@ -12,27 +12,27 @@ const TABLE = "pistachio1";
 // HITOS
 // ==============================
 const hitos = [
-  { fecha: '2023-10-02', texto: 'Op. C23' },
-  { fecha: '2024-09-30', texto: 'Op. C24' },
-  { fecha: '2025-09-29', texto: 'Op. C25' }
+  { fecha: "2023-10-02", texto: "Op. C23" },
+  { fecha: "2024-09-30", texto: "Op. C24" },
+  { fecha: "2025-09-29", texto: "Op. C25" }
 ];
 
 // ==============================
 // COLORS
 // ==============================
 const COLORS = {
-  usdlb_std: '#111827',
-  usdlb_large: '#2563eb',
-  usdlb_kernel: '#16a34a',
-  eurkg_es2125: '#7c3aed',
-  eurkg_eskernel: '#ea580c'
+  usdlb_std: "#111827",
+  usdlb_large: "#2563eb",
+  usdlb_kernel: "#16a34a",
+  eurkg_es2125: "#7c3aed",
+  eurkg_eskernel: "#ea580c"
 };
 
 // ==============================
 // STATE
 // ==============================
 let globalData = [];
-let activeColumns = ['usdlb_std'];
+let activeColumns = ["usdlb_std"];
 
 let chart = null;
 let resizeObserver = null;
@@ -164,7 +164,7 @@ function setupTickers() {
 }
 
 // ==============================
-// SET ACTIVE TICKER
+// ACTIVE TICKER
 // ==============================
 function setActiveTicker(ticker) {
 
@@ -240,9 +240,14 @@ function calculateSMA(values, period = 90) {
 // ==============================
 function setupChart() {
 
-  const ctx = document
-    .getElementById("currencyChart")
-    .getContext("2d");
+  const canvas = document.getElementById("currencyChart");
+
+  if (!canvas) {
+    console.error("Canvas not found");
+    return;
+  }
+
+  const ctx = canvas.getContext("2d");
 
   chart = new Chart(ctx, {
 
@@ -256,6 +261,7 @@ function setupChart() {
     options: {
 
       responsive: true,
+
       maintainAspectRatio: false,
 
       interaction: {
@@ -264,7 +270,7 @@ function setupChart() {
       },
 
       animation: {
-        duration: 500
+        duration: 450
       },
 
       layout: {
@@ -429,6 +435,8 @@ function setupResizeObserver() {
 
   const wrapper = document.querySelector(".chart-wrapper");
 
+  if (!wrapper) return;
+
   const debouncedResize = debounce(() => {
 
     if (chart) {
@@ -457,7 +465,7 @@ function updateChart() {
   chart.data.datasets = [];
 
   // ==========================
-  // STOCK DATA
+  // STOCK BARS
   // ==========================
   const stockValues = sorted.map(d => {
 
@@ -672,10 +680,8 @@ function updateUI() {
   changeEl.textContent =
     `${isPositive ? "▲" : "▼"} ${Math.abs(change).toFixed(2)}% today`;
 
-  changeEl.style.color =
-    isPositive
-      ? "#16a34a"
-      : "#dc2626";
+  changeEl.className =
+    `change ${isPositive ? "up" : "down"}`;
 }
 
 // ==============================
