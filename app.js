@@ -2,11 +2,14 @@
 // CONFIG
 // ==============================
 const SUPABASE_URL = "https://pqtbmnqsftqyvkhoszyy.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxdGJtbnFzZnRxeXZraG9zenl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU2NjEyMDgsImV4cCI6MjA4MTIzNzIwOH0.fS2Wp0lp-GEJXVUpfhcaFRQzxtOY7nhJNjTlpkRxQtA";
+
+const SUPABASE_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJw..." // <- tu key completa aquí
+
 const TABLE = "pistachio1";
 
 // ==============================
-// HITOS (MILESTONES)
+// HITOS
 // ==============================
 const hitos = [
   { fecha: '2023-10-02', texto: 'Op. C23' },
@@ -15,34 +18,51 @@ const hitos = [
 ];
 
 // ==============================
+// COLORS
+// ==============================
+const COLORS = {
+  usdlb_std: '#111827',
+  usdlb_large: '#2563eb',
+  usdlb_kernel: '#16a34a',
+  eurkg_es2125: '#7c3aed',
+  eurkg_eskernel: '#ea580c'
+};
+
+// ==============================
 // STATE
 // ==============================
 let globalData = [];
-let activeColumns = ["usdlb_std"];
+let activeColumns = ['usdlb_std'];
+
 let chart = null;
 let resizeObserver = null;
 let resizeTimeout = null;
 
 // ==============================
-// DEBOUNCE UTILITY
+// DEBOUNCE
 // ==============================
 function debounce(func, delay) {
   return function (...args) {
     clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => func.apply(this, args), delay);
+
+    resizeTimeout = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
   };
 }
 
 // ==============================
 // INIT
 // ==============================
-document.addEventListener("DOMContentLoaded", async () => {
+window.addEventListener("DOMContentLoaded", async () => {
+
   if (typeof Chart === "undefined") {
-    console.error("Chart.js no cargado");
+    console.error("Chart.js not loaded");
     return;
   }
 
   showLoadingState();
+
   await fetchData();
 
   if (!globalData.length) {
@@ -53,29 +73,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupTickers();
   setupChart();
   setupResizeObserver();
-  updateUI();
-});
 
-// ==============================
-// CLEANUP ON UNLOAD
-// ==============================
-window.addEventListener("unload", () => {
-  if (resizeObserver) {
-    resizeObserver.disconnect();
-  }
-  if (chart) {
-    chart.destroy();
-  }
-  clearTimeout(resizeTimeout);
+  updateTickerValues();
+  updateUI();
 });
 
 // ==============================
 // FETCH DATA
 // ==============================
 async function fetchData() {
+
   try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLE}?select=*&order=fecha.desc&limit=5000`,
+
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/${TABLE}?select=*&order=fecha.asc&limit=5000`,
       {
         headers: {
           apikey: SUPABASE_KEY,
@@ -84,20 +95,20 @@ async function fetchData() {
       }
     );
 
-    const data = await res.json();
+    const data = await response.json();
 
-    if (!res.ok) {
+    if (!response.ok) {
       console.error("Supabase error:", data);
       return;
     }
 
-    if (!Array.isArray(data) || data.length === 0) {
+    if (!Array.isArray(data) || !data.length) {
       console.error("Empty dataset");
       return;
     }
 
     globalData = data
-      .filter(d => d.fecha)
+      .filter(item => item.fecha)
       .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
   } catch (err) {
@@ -106,84 +117,100 @@ async function fetchData() {
 }
 
 // ==============================
-// UI LOADING STATE
+// LOADING STATE
 // ==============================
 function showLoadingState() {
+
   document.getElementById("productTitle").textContent = "Loading...";
-  document.getElementById("productPrice").textContent = "-";
+  document.getElementById("productPrice").textContent = "--";
   document.getElementById("productChange").textContent = "";
 }
 
 // ==============================
-// SETUP TICKERS
+// TICKERS
 // ==============================
 function setupTickers() {
-  const tickers = document.querySelectorAll(".ticker");
 
-  tickers.forEach((t, index) => {
-    const labelEl = t.querySelector(".label");
+  const tickers = document.querySelectorAll(".ticker-card");
 
-    if (labelEl && t.dataset.name) {
-      labelEl.textContent = t.dataset.name;
-    }
+  tickers.forEach((ticker, index) => {
 
-    // Keyboard navigation
-    t.addEventListener("keydown", (e) => {
+    ticker.addEventListener("click", () => {
+      setActiveTicker(ticker);
+    });
+
+    ticker.addEventListener("keydown", (e) => {
+
       let nextIndex = index;
-      
+
       if (e.key === "ArrowRight") {
-        e.preventDefault();
         nextIndex = (index + 1) % tickers.length;
-      } else if (e.key === "ArrowLeft") {
-        e.preventDefault();
+      }
+
+      if (e.key === "ArrowLeft") {
         nextIndex = (index - 1 + tickers.length) % tickers.length;
       }
-      
+
       if (nextIndex !== index) {
         tickers[nextIndex].focus();
       }
-    });
 
-    // Click handler
-    t.addEventListener("click", () => toggleTicker(t));
-    t.addEventListener("keypress", (e) => {
-      if (e.key === " " || e.key === "Enter") {
+      if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        toggleTicker(t);
+        setActiveTicker(ticker);
       }
     });
   });
 }
 
 // ==============================
-// TOGGLE TICKER
+// SET ACTIVE TICKER
 // ==============================
-function toggleTicker(ticker) {
-  const col = ticker.dataset.column;
+function setActiveTicker(ticker) {
 
-  if (activeColumns.includes(col)) {
-    activeColumns = activeColumns.filter(c => c !== col);
-    ticker.classList.remove("active");
-  } else {
-    activeColumns.push(col);
-    ticker.classList.add("active");
-  }
+  document.querySelectorAll(".ticker-card").forEach(t => {
+    t.classList.remove("active");
+  });
 
-  if (activeColumns.length === 0) {
-    activeColumns = [col];
-    ticker.classList.add("active");
-  }
+  ticker.classList.add("active");
+
+  activeColumns = [ticker.dataset.column];
 
   updateUI();
 }
 
 // ==============================
-// CALCULATE SMA (SIMPLE MOVING AVERAGE)
+// UPDATE TICKER VALUES
+// ==============================
+function updateTickerValues() {
+
+  if (!globalData.length) return;
+
+  const latest = globalData[globalData.length - 1];
+
+  document.querySelectorAll(".ticker-card").forEach(card => {
+
+    const col = card.dataset.column;
+
+    const value = Number(latest[col]);
+
+    const valueEl = card.querySelector(".ticker-value");
+
+    if (!isNaN(value)) {
+      valueEl.textContent = value.toFixed(2);
+    }
+  });
+}
+
+// ==============================
+// SMA
 // ==============================
 function calculateSMA(values, period = 90) {
+
   const result = [];
 
   for (let i = 0; i < values.length; i++) {
+
     if (i < period - 1) {
       result.push(null);
       continue;
@@ -193,9 +220,11 @@ function calculateSMA(values, period = 90) {
     let count = 0;
 
     for (let j = 0; j < period; j++) {
-      const v = values[i - j];
-      if (v !== null && !isNaN(v)) {
-        sum += v;
+
+      const value = values[i - j];
+
+      if (value !== null && !isNaN(value)) {
+        sum += value;
         count++;
       }
     }
@@ -210,66 +239,182 @@ function calculateSMA(values, period = 90) {
 // SETUP CHART
 // ==============================
 function setupChart() {
-  const ctx = document.getElementById("currencyChart").getContext("2d");
+
+  const ctx = document
+    .getElementById("currencyChart")
+    .getContext("2d");
 
   chart = new Chart(ctx, {
+
     type: "line",
+
     data: {
       labels: [],
       datasets: []
     },
+
     options: {
+
       responsive: true,
       maintainAspectRatio: false,
-      interaction: { mode: 'nearest', intersect: false },
+
+      interaction: {
+        mode: "nearest",
+        intersect: false
+      },
+
+      animation: {
+        duration: 500
+      },
+
+      layout: {
+        padding: {
+          top: 24,
+          right: 20,
+          left: 10,
+          bottom: 10
+        }
+      },
+
       plugins: {
-        legend: { display: false },
-        annotation: { annotations: {} },
+
+        legend: {
+          display: false
+        },
+
+        annotation: {
+          annotations: {}
+        },
+
         tooltip: {
-          backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          titleColor: '#fff',
-          bodyColor: '#fff',
-          borderColor: 'rgba(255, 255, 255, 0.2)',
+
+          backgroundColor: "rgba(255,255,255,0.98)",
+
+          titleColor: "#111827",
+          bodyColor: "#374151",
+
+          borderColor: "rgba(0,0,0,0.06)",
           borderWidth: 1,
-          padding: 10,
+
+          padding: 14,
+
           displayColors: true,
+
+          titleFont: {
+            family: "Manrope",
+            size: 13,
+            weight: "700"
+          },
+
+          bodyFont: {
+            family: "Manrope",
+            size: 13,
+            weight: "600"
+          },
+
           callbacks: {
             label: function(context) {
-              let label = context.dataset.label || '';
+
+              let label = context.dataset.label || "";
+
               if (label) {
-                label += ': ';
+                label += ": ";
               }
+
               if (context.parsed.y !== null) {
                 label += context.parsed.y.toFixed(2);
               }
+
               return label;
             }
           }
         }
       },
+
       scales: {
+
         x: {
-          grid: { display: false }
-        },
-        y: {
-          position: "right",
-          grace: "30%",
+
+          grid: {
+            display: false
+          },
+
+          border: {
+            display: false
+          },
+
           ticks: {
-            stepSize: 0.10,
-            callback: v => Number(v).toFixed(2)
+
+            color: "#9ca3af",
+
+            font: {
+              family: "Manrope",
+              size: 11,
+              weight: "600"
+            }
           }
         },
+
+        y: {
+
+          position: "right",
+
+          grace: "20%",
+
+          grid: {
+            color: "rgba(0,0,0,0.05)",
+            drawBorder: false
+          },
+
+          border: {
+            display: false
+          },
+
+          ticks: {
+
+            color: "#6b7280",
+
+            stepSize: 0.10,
+
+            font: {
+              family: "Manrope",
+              size: 11,
+              weight: "600"
+            },
+
+            callback: value => Number(value).toFixed(2)
+          }
+        },
+
         yLeft: {
+
           position: "left",
+
           min: 0,
           max: 1500000,
-          grace: 0,
+
           grid: {
             drawOnChartArea: false
           },
+
+          border: {
+            display: false
+          },
+
           ticks: {
+
+            color: "#d1d5db",
+
             stepSize: 100000,
-            callback: value => value.toLocaleString('es-ES') + " MT"
+
+            font: {
+              family: "Manrope",
+              size: 10,
+              weight: "600"
+            },
+
+            callback: value =>
+              value.toLocaleString("es-ES") + " MT"
           }
         }
       }
@@ -278,144 +423,204 @@ function setupChart() {
 }
 
 // ==============================
-// SETUP RESIZE OBSERVER
+// RESIZE OBSERVER
 // ==============================
 function setupResizeObserver() {
-  const chartWrapper = document.querySelector('.chart-wrapper');
-  
-  const debouncedUpdate = debounce(() => {
+
+  const wrapper = document.querySelector(".chart-wrapper");
+
+  const debouncedResize = debounce(() => {
+
     if (chart) {
       chart.resize();
     }
+
   }, 250);
 
-  resizeObserver = new ResizeObserver(debouncedUpdate);
-  resizeObserver.observe(chartWrapper);
+  resizeObserver = new ResizeObserver(debouncedResize);
+
+  resizeObserver.observe(wrapper);
 }
 
 // ==============================
 // UPDATE CHART
 // ==============================
 function updateChart() {
+
   if (!chart || !globalData.length) return;
 
-  const sorted = [...globalData].sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+  const sorted = [...globalData]
+    .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
-  const lastDate = new Date(sorted[sorted.length - 1].fecha);
-  const minDate = new Date(lastDate);
-  minDate.setFullYear(minDate.getFullYear() - 4);
+  chart.data.labels = sorted.map(d => d.fecha);
 
-  let filtered = sorted.filter(d => {
-    const date = new Date(d.fecha);
-    return !isNaN(date) && date >= minDate;
-  });
-
-  filtered = filtered.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-
-  const lastDataPoint = sorted[sorted.length - 1];
-
-  if (lastDataPoint && !filtered.find(d => d.fecha === lastDataPoint.fecha)) {
-    filtered.push(lastDataPoint);
-  }
-
-  filtered = filtered.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-
-  chart.data.labels = filtered.map(d => d.fecha);
   chart.data.datasets = [];
 
+  // ==========================
   // STOCK DATA
-  const stockValues = filtered.map(d => {
-    const v = Number(d.stock_MT);
-    return isNaN(v) ? null : v;
+  // ==========================
+  const stockValues = sorted.map(d => {
+
+    const value = Number(d.stock_MT);
+
+    return isNaN(value) ? null : value;
   });
 
   chart.data.datasets.push({
+
     type: "bar",
+
     label: "Stock MT",
+
     data: stockValues,
+
     yAxisID: "yLeft",
-    backgroundColor: "rgba(18,21,28,0.015)",
-    borderColor: "rgba(18,21,28,0.10)",
-    borderWidth: 1.2,
+
+    backgroundColor: "rgba(17,24,39,0.02)",
+
+    borderWidth: 0,
+
     barPercentage: 0.5,
+
     categoryPercentage: 0.7,
+
     order: 2
   });
 
-  // ACTIVE COLUMNS
-  activeColumns.forEach((col, i) => {
-    const ticker = document.querySelector(`.ticker[data-column="${col}"]`);
-    const label = ticker ? ticker.dataset.name : col;
+  // ==========================
+  // MAIN DATASET
+  // ==========================
+  activeColumns.forEach(col => {
 
-    const values = filtered.map(d => {
-      const v = Number(d[col]);
-      return isNaN(v) ? null : v;
+    const ticker = document.querySelector(
+      `.ticker-card[data-column="${col}"]`
+    );
+
+    const label = ticker
+      ? ticker.dataset.name
+      : col;
+
+    const values = sorted.map(d => {
+
+      const value = Number(d[col]);
+
+      return isNaN(value) ? null : value;
     });
 
     chart.data.datasets.push({
-      label: label,
+
+      label,
+
       data: values,
-      borderWidth: 1.5,
-      tension: 0.2,
+
+      borderWidth: 1.8,
+
+      tension: 0.25,
+
       pointRadius: 0,
-      borderColor: i === 0 ? "#12151c" : "#dc2626"
+
+      borderColor: COLORS[col],
+
+      fill: false,
+
+      order: 1
     });
 
+    // ========================
+    // SMA
+    // ========================
     const sma = calculateSMA(values, 90);
 
     chart.data.datasets.push({
-      label: label + " SMA(3M)",
+
+      label: `${label} SMA`,
+
       data: sma,
+
       borderWidth: 1,
+
       borderDash: [5, 5],
-      tension: 0.2,
+
+      tension: 0.25,
+
       pointRadius: 0,
-      borderColor: "rgba(0,0,0,0.35)"
+
+      borderColor: "rgba(17,24,39,0.18)",
+
+      order: 1
     });
   });
 
-  // ANNOTATIONS (MILESTONES)
+  // ==========================
+  // ANNOTATIONS
+  // ==========================
   const annotations = {};
 
-  hitos.forEach((h, i) => {
-    const point = sorted.find(d => d.fecha === h.fecha);
+  hitos.forEach((hito, i) => {
+
+    const point = sorted.find(
+      d => d.fecha === hito.fecha
+    );
+
     if (!point) return;
 
     const y = Number(point[activeColumns[0]]);
+
     if (isNaN(y)) return;
 
     annotations[`line_${i}`] = {
+
       type: "line",
-      xMin: h.fecha,
-      xMax: h.fecha,
-      borderColor: "rgba(220,38,38,0.25)",
+
+      xMin: hito.fecha,
+      xMax: hito.fecha,
+
+      borderColor: "rgba(220,38,38,0.12)",
+
       borderWidth: 1
     };
 
     annotations[`point_${i}`] = {
+
       type: "point",
-      xValue: h.fecha,
+
+      xValue: hito.fecha,
       yValue: y,
+
       backgroundColor: "#dc2626",
-      radius: 4
+
+      radius: 3
     };
 
     annotations[`label_${i}`] = {
+
       type: "label",
-      xValue: h.fecha,
+
+      xValue: hito.fecha,
       yValue: y,
-      content: `${h.texto} · ${y.toFixed(2)}`,
+
+      content: `${hito.texto} · ${y.toFixed(2)}`,
+
       backgroundColor: "rgba(255,255,255,0)",
+
       borderWidth: 0,
+
       color: "#dc2626",
-      font: { size: 10 },
+
+      font: {
+        size: 10,
+        family: "Manrope",
+        weight: "700"
+      },
+
       padding: 4,
+
       yAdjust: -12
     };
   });
 
   chart.options.plugins.annotation = {
-    annotations: annotations,
+    annotations,
     drawTime: "afterDatasetsDraw"
   };
 
@@ -426,38 +631,65 @@ function updateChart() {
 // UPDATE UI
 // ==============================
 function updateUI() {
+
   if (!globalData.length) return;
 
   updateChart();
 
   const latest = globalData[globalData.length - 1];
+
   const prev = globalData[globalData.length - 2];
 
   const col = activeColumns[0];
 
   const value = Number(latest[col]);
-  const prevValue = prev ? Number(prev[col]) : value;
 
-  const ticker = document.querySelector(`.ticker[data-column="${col}"]`);
-  const label = ticker ? ticker.dataset.name : col;
+  const prevValue = prev
+    ? Number(prev[col])
+    : value;
+
+  const ticker = document.querySelector(
+    `.ticker-card[data-column="${col}"]`
+  );
+
+  const label = ticker
+    ? ticker.dataset.name
+    : col;
 
   document.getElementById("productTitle").textContent = label;
-  document.getElementById("productPrice").textContent = value.toFixed(2);
 
-  const change = ((value - prevValue) / prevValue) * 100;
+  document.getElementById("productPrice").textContent =
+    value.toFixed(2);
+
+  const change =
+    ((value - prevValue) / prevValue) * 100;
+
   const isPositive = change >= 0;
 
-  const changeEl = document.getElementById("productChange");
-  changeEl.textContent = `${isPositive ? "▲" : "▼"} ${Math.abs(change).toFixed(2)}%`;
-  changeEl.className = `change ${isPositive ? "down" : "up"}`;
+  const changeEl =
+    document.getElementById("productChange");
+
+  changeEl.textContent =
+    `${isPositive ? "▲" : "▼"} ${Math.abs(change).toFixed(2)}% today`;
+
+  changeEl.style.color =
+    isPositive
+      ? "#16a34a"
+      : "#dc2626";
 }
 
 // ==============================
-// KEYBOARD SHORTCUTS
+// CLEANUP
 // ==============================
-document.addEventListener("keydown", (e) => {
-  // Reset zoom on 'r' key
-  if (e.key === "r" && e.ctrlKey === false && e.metaKey === false && chart) {
-    chart.resetZoom();
+window.addEventListener("unload", () => {
+
+  if (resizeObserver) {
+    resizeObserver.disconnect();
   }
+
+  if (chart) {
+    chart.destroy();
+  }
+
+  clearTimeout(resizeTimeout);
 });
