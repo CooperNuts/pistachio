@@ -6,6 +6,7 @@
   --border: rgba(0,0,0,0.05);
   --green: #16a34a;
   --red: #dc2626;
+
   --shadow:
     0 1px 2px rgba(0,0,0,0.02),
     0 12px 32px rgba(0,0,0,0.03);
@@ -65,11 +66,17 @@ h1 {
 .product-switch {
   height: 44px;
   padding-inline: 22px;
+
   border-radius: 999px;
+
   border: 1px solid rgba(0,0,0,0.06);
+
   background: white;
+
   cursor: pointer;
+
   font-weight: 700;
+
   transition: 0.2s ease;
 }
 
@@ -86,13 +93,160 @@ h1 {
 
 .card {
   background: white;
+
   border-radius: 32px;
+
   border: 1px solid rgba(0,0,0,0.05);
+
   padding: 42px;
+
   box-shadow: var(--shadow);
 }
 
 .price-container {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+
+  margin-bottom: 34px;
+}
+
+.product-title {
+  font-size: 18px;
+  margin-bottom: 18px;
+  color: #374151;
+}
+
+.price {
+  font-size: 72px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+
+.change {
+  margin-top: 12px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.change.up {
+  color: var(--green);
+}
+
+.change.down {
+  color: var(--red);
+}
+
+.chart-actions {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.ticker-card {
+  width: 128px;
+  min-height: 74px;
+
+  background: rgba(255,255,255,0.92);
+
+  border: 1px solid rgba(0,0,0,0.04);
+
+  border-radius: 20px;
+
+  padding: 14px;
+
+  display: flex;
+  gap: 10px;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.02),
+    0 8px 24px rgba(0,0,0,0.03);
+}
+
+.ticker-card.active {
+  border-color: rgba(17,24,39,0.12);
+}
+
+.ticker-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  margin-top: 5px;
+}
+
+.ticker-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ticker-name {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.ticker-value {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 640px;
+}
+
+#currencyChart {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (max-width: 1024px) {
+
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .price-container {
+    flex-direction: column;
+  }
+
+  .chart-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ticker-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .header-content,
+  .main-content {
+    padding-inline: 20px;
+  }
+
+  h1 {
+    font-size: 42px;
+  }
+
+  .price {
+    font-size: 54px;
+  }
+
+  .chart-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-wrapper {
+    height: 480px;
+  }
 }
