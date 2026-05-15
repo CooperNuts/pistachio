@@ -42,6 +42,10 @@
       text-rendering: optimizeLegibility;
     }
 
+    /* =========================
+       HEADER
+    ========================= */
+
     .header {
       padding-top: 42px;
       padding-bottom: 10px;
@@ -51,6 +55,17 @@
       max-width: 1440px;
       margin: 0 auto;
       padding-inline: 40px;
+    }
+
+    .header-top-row {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: flex-start;
+
+      gap: 32px;
     }
 
     h1 {
@@ -67,6 +82,66 @@
       color: #6b7280;
       font-weight: 500;
     }
+
+    /* =========================
+       PRODUCT SWITCHER
+    ========================= */
+
+    .product-switcher {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 12px;
+
+      padding-top: 6px;
+    }
+
+    .product-tab {
+
+      height: 42px;
+
+      padding-inline: 22px;
+
+      border-radius: 999px;
+
+      border: 1px solid rgba(0,0,0,0.06);
+
+      background: #111827;
+
+      color: white;
+
+      font-family: 'Manrope', sans-serif;
+
+      font-size: 14px;
+
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+
+      box-shadow:
+        0 1px 2px rgba(0,0,0,0.02),
+        0 8px 24px rgba(0,0,0,0.03);
+    }
+
+    .product-tab:hover {
+
+      transform: translateY(-1px);
+
+      box-shadow:
+        0 8px 30px rgba(0,0,0,0.06);
+    }
+
+    /* =========================
+       MAIN
+    ========================= */
 
     .main-content {
       max-width: 1440px;
@@ -368,6 +443,11 @@
 
     @media (max-width: 1024px) {
 
+      .header-top-row {
+        flex-direction: column;
+        gap: 20px;
+      }
+
       .price-container {
         flex-direction: column;
         gap: 24px;
@@ -431,14 +511,36 @@
 <body>
 
 <header class="header" role="banner">
+
   <div class="header-content">
 
-    <div class="header-text">
-      <h1>Pistachio Price Insights</h1>
-      <p class="subtitle">From data to decisions</p>
+    <div class="header-top-row">
+
+      <div class="header-text">
+
+        <h1>Pistachio Price Insights</h1>
+
+        <p class="subtitle">
+          From data to decisions
+        </p>
+
+      </div>
+
+      <div class="product-switcher">
+
+        <button
+          class="product-tab"
+          data-product="pistachio"
+        >
+          Pistachio
+        </button>
+
+      </div>
+
     </div>
 
   </div>
+
 </header>
 
 <main role="main" class="main-content">
@@ -550,11 +652,13 @@
       </div>
 
       <div class="chart-wrapper">
+
         <canvas
           id="currencyChart"
           role="img"
           aria-label="Pistachio price chart"
         ></canvas>
+
       </div>
 
     </div>
@@ -617,8 +721,23 @@
 
 <footer class="footer" role="contentinfo">
   <p>&copy; 2025 · E. Lagarda</p>
+
   <p class="disclaimer">
-    The prices displayed on this website are provided solely as indicative price signals reflecting general market conditions and are intended for statistical and informational purposes only. Under no circumstances shall they be construed as firm, binding, or contractual offers. The indicated prices are derived from information gathered from various publicly available and industry-relevant sources. While reasonable efforts are made to ensure accuracy, no representation or warranty is given as to the completeness, reliability, or timeliness of such information. These prices do not take into account specific conditions related to product availability, logistics, contractual volumes, quality specifications, or individual payment terms, all of which may have a material impact on actual commercial offers. Users should conduct their own market research and consult with industry professionals before making any commercial decisions. I love pistachios, not sure about the vice-versa.
+    The prices displayed on this website are provided solely as indicative price
+    signals reflecting general market conditions and are intended for
+    statistical and informational purposes only. Under no circumstances shall
+    they be construed as firm, binding, or contractual offers. The indicated
+    prices are derived from information gathered from various publicly available
+    and industry-relevant sources. While reasonable efforts are made to ensure
+    accuracy, no representation or warranty is given as to the completeness,
+    reliability, or timeliness of such information. These prices do not take
+    into account specific conditions related to product availability,
+    logistics, contractual volumes, quality specifications, or individual
+    payment terms, all of which may have a material impact on actual commercial
+    offers. Users should conduct their own market research and consult with
+    industry professionals before making any commercial decisions. I love
+    pistachios, not sure about the vice-versa.
+  </p>
 </footer>
 
 <script src="app.js" defer></script>
