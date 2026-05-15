@@ -1,28 +1,81 @@
+//
+// ==========================================
+// ALLNUTS.TECH
+// COMPLETE PRODUCTION JS
+// ==========================================
+//
+
+//
+// ==========================================
+// SUPABASE CONFIG
+// ==========================================
+//
+
 const SUPABASE_URL =
   "https://pqtbmnqsftqyvkhoszyy.supabase.co";
 
 const SUPABASE_KEY =
-  "TU_SUPABASE_KEY";
+  "TU_SUPABASE_KEY_COMPLETA_AQUI";
+
+//
+// ==========================================
+// PRODUCTS CONFIG
+// ==========================================
+//
 
 const PRODUCTS = {
+
+  // ========================================
+  // CASHEW
+  // ========================================
 
   cashew: {
 
     table: "cashew1",
 
+    hitos: [],
+
     tickers: [
+
       {
         column: "usdlb_ww320",
         name: "WW320 USD/LB",
         short: "WW320",
         color: "#111827"
+      },
+
+      {
+        column: "usdlb_ww240",
+        name: "WW240 USD/LB",
+        short: "WW240",
+        color: "#2563eb"
+      },
+
+      {
+        column: "usdlb_lp",
+        name: "Large Pieces USD/LB",
+        short: "LP",
+        color: "#16a34a"
       }
+
     ]
   },
+
+  // ========================================
+  // PISTACHIO
+  // ========================================
 
   pistachio: {
 
     table: "pistachio1",
+
+    hitos: [
+
+      { fecha: "2023-10-02", texto: "Op. C23" },
+      { fecha: "2024-09-30", texto: "Op. C24" },
+      { fecha: "2025-09-29", texto: "Op. C25" }
+
+    ],
 
     tickers: [
 
@@ -60,9 +113,16 @@ const PRODUCTS = {
         short: "ES Kernel",
         color: "#ea580c"
       }
+
     ]
   }
 };
+
+//
+// ==========================================
+// STATE
+// ==========================================
+//
 
 let currentProduct = "cashew";
 
@@ -72,9 +132,22 @@ let activeColumn = null;
 
 let chart = null;
 
+//
+// ==========================================
+// INIT
+// ==========================================
+//
+
 window.addEventListener(
   "DOMContentLoaded",
   async () => {
+
+    if (typeof Chart === "undefined") {
+
+      console.error("Chart.js not loaded");
+
+      return;
+    }
 
     setupProductButtons();
 
@@ -84,36 +157,48 @@ window.addEventListener(
   }
 );
 
+//
+// ==========================================
+// PRODUCT BUTTONS
+// ==========================================
+//
+
 function setupProductButtons() {
 
-  document
-    .querySelectorAll(".product-switch")
-    .forEach(button => {
+  const buttons =
+    document.querySelectorAll(".product-switch");
 
-      button.addEventListener(
-        "click",
-        async () => {
+  buttons.forEach(button => {
 
-          document
-            .querySelectorAll(".product-switch")
-            .forEach(btn =>
-              btn.classList.remove("active")
-            );
+    button.addEventListener(
+      "click",
+      async () => {
 
-          button.classList.add("active");
+        buttons.forEach(btn => {
+          btn.classList.remove("active");
+        });
 
-          currentProduct =
-            button.dataset.product;
+        button.classList.add("active");
 
-          await loadProduct(currentProduct);
-        }
-      );
-    });
+        currentProduct =
+          button.dataset.product;
+
+        await loadProduct(currentProduct);
+      }
+    );
+  });
 }
+
+//
+// ==========================================
+// LOAD PRODUCT
+// ==========================================
+//
 
 async function loadProduct(productKey) {
 
-  const config = PRODUCTS[productKey];
+  const config =
+    PRODUCTS[productKey];
 
   activeColumn =
     config.tickers[0].column;
@@ -126,6 +211,73 @@ async function loadProduct(productKey) {
 
   updateUI();
 }
+
+//
+// ==========================================
+// FETCH DATA
+// ==========================================
+//
+
+async function fetchData(table) {
+
+  try {
+
+    const response = await fetch(
+
+      `${SUPABASE_URL}/rest/v1/${table}?select=*&order=fecha.asc&limit=10000`,
+
+      {
+        headers: {
+
+          apikey: SUPABASE_KEY,
+
+          Authorization:
+            `Bearer ${SUPABASE_KEY}`
+        }
+      }
+    );
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+
+      console.error(
+        "Supabase error:",
+        data
+      );
+
+      return;
+    }
+
+    globalData = data
+
+      .filter(item => item.fecha)
+
+      .filter(item =>
+        !isNaN(new Date(item.fecha))
+      )
+
+      .sort(
+        (a, b) =>
+          new Date(a.fecha) -
+          new Date(b.fecha)
+      );
+
+  } catch (err) {
+
+    console.error(
+      "Fetch error:",
+      err
+    );
+  }
+}
+
+//
+// ==========================================
+// RENDER TICKERS
+// ==========================================
+//
 
 function renderTickers(tickers) {
 
@@ -148,17 +300,22 @@ function renderTickers(tickers) {
       ticker.column;
 
     card.innerHTML = `
+
       <div
         class="ticker-dot"
         style="background:${ticker.color}"
       ></div>
 
       <div class="ticker-content">
+
         <span class="ticker-name">
           ${ticker.short}
         </span>
 
-        <span class="ticker-value"></span>
+        <span class="ticker-value">
+          --
+        </span>
+
       </div>
     `;
 
@@ -168,9 +325,9 @@ function renderTickers(tickers) {
 
         document
           .querySelectorAll(".ticker-card")
-          .forEach(c =>
-            c.classList.remove("active")
-          );
+          .forEach(c => {
+            c.classList.remove("active");
+          });
 
         card.classList.add("active");
 
@@ -185,22 +342,51 @@ function renderTickers(tickers) {
   });
 }
 
-async function fetchData(table) {
+//
+// ==========================================
+// UPDATE TICKER VALUES
+// ==========================================
+//
 
-  const response = await fetch(
-    `${SUPABASE_URL}/rest/v1/${table}?select=*&order=fecha.asc&limit=10000`,
-    {
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization:
-          `Bearer ${SUPABASE_KEY}`
+function updateTickerValues() {
+
+  if (!globalData.length) return;
+
+  const latest =
+    globalData[
+      globalData.length - 1
+    ];
+
+  document
+    .querySelectorAll(".ticker-card")
+
+    .forEach(card => {
+
+      const value =
+        Number(
+          latest[
+            card.dataset.column
+          ]
+        );
+
+      const valueEl =
+        card.querySelector(
+          ".ticker-value"
+        );
+
+      if (!isNaN(value)) {
+
+        valueEl.textContent =
+          value.toFixed(2);
       }
-    }
-  );
-
-  globalData =
-    await response.json();
+    });
 }
+
+//
+// ==========================================
+// CHART SETUP
+// ==========================================
+//
 
 function setupChart() {
 
@@ -214,7 +400,9 @@ function setupChart() {
     type: "line",
 
     data: {
+
       labels: [],
+
       datasets: []
     },
 
@@ -224,87 +412,306 @@ function setupChart() {
 
       maintainAspectRatio: false,
 
+      interaction: {
+
+        mode: "nearest",
+
+        intersect: false
+      },
+
+      animation: {
+
+        duration: 450
+      },
+
       plugins: {
+
         legend: {
+
           display: false
+        },
+
+        annotation: {
+
+          annotations: {}
+        },
+
+        tooltip: {
+
+          backgroundColor:
+            "rgba(255,255,255,0.98)",
+
+          titleColor:
+            "#111827",
+
+          bodyColor:
+            "#374151",
+
+          borderColor:
+            "rgba(0,0,0,0.06)",
+
+          borderWidth: 1,
+
+          padding: 14,
+
+          displayColors: true
         }
       },
 
       scales: {
 
         x: {
+
           grid: {
+
             display: false
+          },
+
+          border: {
+
+            display: false
+          },
+
+          ticks: {
+
+            color: "#9ca3af"
           }
         },
 
         y: {
-          position: "right"
+
+          position: "right",
+
+          grace: "10%",
+
+          grid: {
+
+            color:
+              "rgba(0,0,0,0.05)"
+          },
+
+          border: {
+
+            display: false
+          },
+
+          ticks: {
+
+            color: "#6b7280",
+
+            callback: value =>
+              Number(value).toFixed(2)
+          }
+        },
+
+        yLeft: {
+
+          position: "left",
+
+          grid: {
+
+            drawOnChartArea: false
+          },
+
+          border: {
+
+            display: false
+          },
+
+          ticks: {
+
+            color:
+              "rgba(17,24,39,0.25)"
+          }
         }
       }
     }
   });
 }
 
-function updateTickerValues() {
-
-  const latest =
-    globalData[
-      globalData.length - 1
-    ];
-
-  document
-    .querySelectorAll(".ticker-card")
-    .forEach(card => {
-
-      const value =
-        Number(
-          latest[card.dataset.column]
-        );
-
-      card.querySelector(
-        ".ticker-value"
-      ).textContent =
-        value.toFixed(2);
-    });
-}
+//
+// ==========================================
+// UPDATE CHART
+// ==========================================
+//
 
 function updateChart() {
 
+  if (!chart) return;
+
   const labels =
-    globalData.map(d => d.fecha);
+    globalData.map(
+      d => d.fecha
+    );
 
   const values =
     globalData.map(d => {
 
       const value =
-        Number(d[activeColumn]);
+        Number(
+          d[activeColumn]
+        );
 
       return isNaN(value)
         ? null
         : value;
     });
 
-  chart.data.labels = labels;
+  const stockValues =
+    globalData.map(d => {
+
+      const value =
+        Number(d.stock_MT);
+
+      return isNaN(value)
+        ? null
+        : value;
+    });
+
+  const ticker =
+    PRODUCTS[currentProduct]
+
+      .tickers
+
+      .find(
+        t =>
+          t.column === activeColumn
+      );
+
+  chart.data.labels =
+    labels;
 
   chart.data.datasets = [
+
+    // ========================
+    // STOCK BARS
+    // ========================
+
     {
+
+      type: "bar",
+
+      label: "Stock MT",
+
+      data: stockValues,
+
+      yAxisID: "yLeft",
+
+      backgroundColor:
+        "rgba(17,24,39,0.12)",
+
+      borderColor:
+        "rgba(17,24,39,0.18)",
+
+      borderWidth: 1,
+
+      borderRadius: 2,
+
+      barPercentage: 0.72,
+
+      categoryPercentage: 0.92,
+
+      order: 2
+    },
+
+    // ========================
+    // MAIN LINE
+    // ========================
+
+    {
+
+      label: ticker.name,
+
       data: values,
 
-      borderColor: "#111827",
+      borderColor:
+        ticker.color,
 
       borderWidth: 2,
 
       pointRadius: 0,
 
-      tension: 0.2
+      tension: 0.25,
+
+      fill: false,
+
+      order: 1
     }
   ];
+
+  // ========================================
+  // ANNOTATIONS
+  // ========================================
+
+  const annotations = {};
+
+  PRODUCTS[currentProduct]
+    .hitos
+    .forEach((hito, i) => {
+
+      const point =
+        globalData.find(
+          d =>
+            d.fecha === hito.fecha
+        );
+
+      if (!point) return;
+
+      const y =
+        Number(
+          point[activeColumn]
+        );
+
+      if (isNaN(y)) return;
+
+      annotations[
+        `line_${i}`
+      ] = {
+
+        type: "line",
+
+        xMin: hito.fecha,
+
+        xMax: hito.fecha,
+
+        borderColor:
+          "rgba(220,38,38,0.12)",
+
+        borderWidth: 1
+      };
+
+      annotations[
+        `point_${i}`
+      ] = {
+
+        type: "point",
+
+        xValue: hito.fecha,
+
+        yValue: y,
+
+        backgroundColor:
+          "#dc2626",
+
+        radius: 3
+      };
+    });
+
+  chart.options.plugins.annotation.annotations =
+    annotations;
 
   chart.update();
 }
 
+//
+// ==========================================
+// UPDATE UI
+// ==========================================
+//
+
 function updateUI() {
+
+  if (!globalData.length) return;
 
   updateChart();
 
@@ -319,18 +726,23 @@ function updateUI() {
     ];
 
   const value =
-    Number(latest[activeColumn]);
+    Number(
+      latest[activeColumn]
+    );
 
-  const prev =
+  const previousValue =
     previous
-      ? Number(previous[activeColumn])
+      ? Number(
+          previous[activeColumn]
+        )
       : value;
 
   const ticker =
     PRODUCTS[currentProduct]
       .tickers
       .find(
-        t => t.column === activeColumn
+        t =>
+          t.column === activeColumn
       );
 
   document.getElementById(
@@ -344,7 +756,8 @@ function updateUI() {
     value.toFixed(2);
 
   const change =
-    ((value - prev) / prev) * 100;
+    ((value - previousValue)
+      / previousValue) * 100;
 
   const positive =
     change >= 0;
