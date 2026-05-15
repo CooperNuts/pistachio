@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
   <meta charset="UTF-8" />
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+
+  <meta
+    name="theme-color"
+    content="#ffffff"
   />
 
   <title>Nuts Price Insights</title>
 
   <meta
     name="description"
-    content="Global nuts market price intelligence."
+    content="Indicative nuts price signals and market trends."
   />
 
   <link
@@ -35,6 +39,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
 
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1"></script>
+
+  <script>
+    Chart.register(window['chartjs-plugin-annotation']);
+  </script>
+
   <link
     rel="stylesheet"
     href="style.css"
@@ -44,120 +54,237 @@
 
 <body>
 
-  <!-- =========================
-       HEADER
-  ========================== -->
+<!-- ========================================
+     HEADER
+======================================== -->
 
-  <header class="header">
+<header class="header" role="banner">
 
-    <div class="header-content">
+  <div class="header-content">
 
-      <div class="header-text">
+    <div class="header-text">
 
-        <h1>Nuts Price Insights</h1>
+      <h1>Nuts Price Insights</h1>
 
-        <p class="subtitle">
-          From data to decisions
-        </p>
+      <p class="subtitle">
+        From data to decisions
+      </p>
+
+    </div>
+
+    <!-- ========================================
+         PRODUCT SWITCHER
+    ======================================== -->
+
+    <div class="product-switcher">
+
+      <button
+        class="product-switch active"
+        data-product="cashew"
+        type="button"
+      >
+        Cashew
+      </button>
+
+      <button
+        class="product-switch"
+        data-product="pistachio"
+        type="button"
+      >
+        Pistachio
+      </button>
+
+    </div>
+
+  </div>
+
+</header>
+
+<!-- ========================================
+     MAIN
+======================================== -->
+
+<main
+  role="main"
+  class="main-content"
+>
+
+  <section
+    class="chart-section"
+    aria-labelledby="productTitle"
+  >
+
+    <div class="card">
+
+      <!-- ========================================
+           PRICE + TICKERS
+      ======================================== -->
+
+      <div class="price-container">
+
+        <div class="price-left">
+
+          <h2
+            id="productTitle"
+            class="product-title"
+          ></h2>
+
+          <div
+            class="price"
+            id="productPrice"
+          ></div>
+
+          <div
+            class="change"
+            id="productChange"
+            role="status"
+            aria-live="polite"
+          ></div>
+
+        </div>
+
+        <!-- ========================================
+             DYNAMIC TICKERS
+        ======================================== -->
+
+        <div class="top-bar">
+
+          <div
+            class="chart-actions"
+            id="tickerContainer"
+          ></div>
+
+        </div>
 
       </div>
 
-      <!-- PRODUCT SWITCHER -->
+      <!-- ========================================
+           CHART
+      ======================================== -->
 
-      <div class="product-switcher">
+      <div class="chart-wrapper">
 
-        <button
-          class="product-switch active"
-          data-product="cashew"
-        >
-          Cashew
-        </button>
-
-        <button
-          class="product-switch"
-          data-product="pistachio"
-        >
-          Pistachio
-        </button>
+        <canvas
+          id="currencyChart"
+          role="img"
+          aria-label="Nuts price chart"
+        ></canvas>
 
       </div>
 
     </div>
 
-  </header>
+  </section>
 
-  <!-- =========================
-       MAIN
-  ========================== -->
+  <!-- ========================================
+       RESOURCE CARDS
+  ======================================== -->
 
-  <main class="main-content">
+  <section
+    class="dashboard-cards"
+    aria-label="Market resources"
+  >
 
-    <section class="chart-section">
+    <!-- ========================================
+         CARD 1
+    ======================================== -->
 
-      <div class="card">
+    <div class="report-card">
 
-        <!-- PRICE AREA -->
-
-        <div class="price-container">
-
-          <div class="price-left">
-
-            <h2
-              id="productTitle"
-              class="product-title"
-            >
-              Loading...
-            </h2>
-
-            <div
-              id="productPrice"
-              class="price"
-            >
-              --
-            </div>
-
-            <div
-              id="productChange"
-              class="change"
-            >
-            </div>
-
-          </div>
-
-          <!-- TICKERS -->
-
-          <div class="top-bar">
-
-            <div
-              class="chart-actions"
-              id="tickerContainer"
-            >
-            </div>
-
-          </div>
-
-        </div>
-
-        <!-- CHART -->
-
-        <div class="chart-wrapper">
-
-          <canvas id="currencyChart"></canvas>
-
-        </div>
-
+      <div class="report-label">
+        STANDARDS
       </div>
 
-    </section>
+      <h3 class="report-title">
+        APG US Standards for Grades of Pistachio Nuts
+      </h3>
 
-  </main>
+      <p class="report-desc">
 
-  <!-- =========================
-       JS
-  ========================== -->
+        Official quality grading standards for pistachio nuts published by the American Pistachio Growers.
 
-  <script src="app.js"></script>
+      </p>
+
+      <a
+        class="report-button"
+        href="/APG-US-Standards-for-Grades-of-Pistachio-Nuts_Brochure_AUG-26-15.zip_.pdf"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        View Document
+      </a>
+
+    </div>
+
+    <!-- ========================================
+         CARD 2
+    ======================================== -->
+
+    <div class="report-card">
+
+      <div class="report-label">
+        EXPORT
+      </div>
+
+      <h3 class="report-title">
+        Administrative Committee for Pistachios - PEAR
+      </h3>
+
+      <p class="report-desc">
+
+        Pistachio Export Aflatoxin Reporting (PEAR) Program for exports to the European Union. Program Manual 2025–2026.
+
+      </p>
+
+      <a
+        class="report-button"
+        href="PEAR-Program-Manual-2025-2026.pdf"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        View Document
+      </a>
+
+    </div>
+
+  </section>
+
+</main>
+
+<!-- ========================================
+     FOOTER
+======================================== -->
+
+<footer
+  class="footer"
+  role="contentinfo"
+>
+
+  <p>
+    &copy; 2025 · E. Lagarda
+  </p>
+
+  <p class="disclaimer">
+
+    The prices displayed on this website are provided solely as indicative price signals reflecting general market conditions and are intended for statistical and informational purposes only.
+
+    Under no circumstances shall they be construed as firm, binding, or contractual offers.
+
+    The indicated prices are derived from information gathered from various publicly available and industry-relevant sources.
+
+    While reasonable efforts are made to ensure accuracy, no representation or warranty is given as to the completeness, reliability, or timeliness of such information.
+
+    These prices do not take into account specific conditions related to product availability, logistics, contractual volumes, quality specifications, or individual payment terms, all of which may have a material impact on actual commercial offers.
+
+    Users should conduct their own market research and consult with industry professionals before making any commercial decisions.
+
+    I love nuts, not sure about the vice-versa.
+
+  </p>
+
+</footer>
+
+<script src="app.js"></script>
 
 </body>
-
 </html>
