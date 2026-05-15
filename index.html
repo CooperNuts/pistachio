@@ -1,17 +1,31 @@
-# index.html
-
-```html
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
   <title>Nuts Price Insights</title>
 
   <meta
     name="description"
-    content="Indicative nut price signals and market trends."
+    content="Global nuts market price intelligence."
+  />
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  />
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
   />
 
   <link
@@ -19,626 +33,131 @@
     rel="stylesheet"
   />
 
-  <link rel="stylesheet" href="style.css" />
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1"></script>
 
-  <script>
-    Chart.register(window['chartjs-plugin-annotation']);
-  </script>
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
 </head>
 
 <body>
 
-<header class="header">
+  <!-- =========================
+       HEADER
+  ========================== -->
 
-  <div class="header-content">
+  <header class="header">
 
-    <div class="header-text">
-      <h1>Nuts Price Insights</h1>
-      <p class="subtitle">From data to decisions</p>
+    <div class="header-content">
+
+      <div class="header-text">
+
+        <h1>Nuts Price Insights</h1>
+
+        <p class="subtitle">
+          From data to decisions
+        </p>
+
+      </div>
+
+      <!-- PRODUCT SWITCHER -->
+
+      <div class="product-switcher">
+
+        <button
+          class="product-switch active"
+          data-product="cashew"
+        >
+          Cashew
+        </button>
+
+        <button
+          class="product-switch"
+          data-product="pistachio"
+        >
+          Pistachio
+        </button>
+
+      </div>
+
     </div>
 
-    <div class="product-switcher">
+  </header>
 
-      <button
-        class="product-switch active"
-        data-product="cashew"
-      >
-        Cashew
-      </button>
+  <!-- =========================
+       MAIN
+  ========================== -->
 
-      <button
-        class="product-switch"
-        data-product="pistachio"
-      >
-        Pistachio
-      </button>
+  <main class="main-content">
 
-    </div>
+    <section class="chart-section">
 
-  </div>
+      <div class="card">
 
-</header>
+        <!-- PRICE AREA -->
 
-<main class="main-content">
+        <div class="price-container">
 
-  <section class="chart-section">
+          <div class="price-left">
 
-    <div class="card">
+            <h2
+              id="productTitle"
+              class="product-title"
+            >
+              Loading...
+            </h2>
 
-      <div class="price-container">
+            <div
+              id="productPrice"
+              class="price"
+            >
+              --
+            </div>
 
-        <div class="price-left">
+            <div
+              id="productChange"
+              class="change"
+            >
+            </div>
 
-          <h2 id="productTitle" class="product-title"></h2>
+          </div>
 
-          <div class="price" id="productPrice"></div>
+          <!-- TICKERS -->
 
-          <div
-            class="change"
-            id="productChange"
-          ></div>
+          <div class="top-bar">
+
+            <div
+              class="chart-actions"
+              id="tickerContainer"
+            >
+            </div>
+
+          </div>
 
         </div>
 
-        <div class="top-bar">
+        <!-- CHART -->
 
-          <div
-            class="chart-actions"
-            id="tickerContainer"
-          ></div>
+        <div class="chart-wrapper">
+
+          <canvas id="currencyChart"></canvas>
 
         </div>
 
       </div>
 
-      <div class="chart-wrapper">
-        <canvas id="currencyChart"></canvas>
-      </div>
+    </section>
 
-    </div>
+  </main>
 
-  </section>
+  <!-- =========================
+       JS
+  ========================== -->
 
-</main>
-
-<script src="app.js" defer></script>
+  <script src="app.js"></script>
 
 </body>
+
 </html>
-```
-
----
-
-# style.css
-
-```css
-:root {
-  --bg: #fafafa;
-  --card: #ffffff;
-  --text: #111827;
-  --muted: #6b7280;
-  --border: rgba(0,0,0,0.05);
-  --green: #16a34a;
-  --red: #dc2626;
-  --shadow:
-    0 1px 2px rgba(0,0,0,0.02),
-    0 12px 32px rgba(0,0,0,0.03);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Manrope', sans-serif;
-}
-
-.header {
-  padding-top: 42px;
-  padding-bottom: 24px;
-}
-
-.header-content {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding-inline: 40px;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 24px;
-}
-
-.header-text {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-h1 {
-  font-size: 56px;
-  line-height: 1;
-  font-weight: 800;
-  letter-spacing: -0.05em;
-}
-
-.subtitle {
-  font-size: 18px;
-  color: var(--muted);
-}
-
-.product-switcher {
-  display: flex;
-  gap: 12px;
-}
-
-.product-switch {
-  height: 44px;
-  padding-inline: 22px;
-  border-radius: 999px;
-  border: 1px solid rgba(0,0,0,0.06);
-  background: white;
-  cursor: pointer;
-  font-weight: 700;
-  transition: 0.2s ease;
-}
-
-.product-switch.active {
-  background: #111827;
-  color: white;
-}
-
-.main-content {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 30px 40px 80px;
-}
-
-.card {
-  background: white;
-  border-radius: 32px;
-  border: 1px solid rgba(0,0,0,0.05);
-  padding: 42px;
-  box-shadow: var(--shadow);
-}
-
-.price-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 40px;
-  margin-bottom: 34px;
-}
-
-.product-title {
-  font-size: 18px;
-  margin-bottom: 18px;
-  color: #374151;
-}
-
-.price {
-  font-size: 72px;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.06em;
-}
-
-.change {
-  margin-top: 12px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.change.up {
-  color: var(--green);
-}
-
-.change.down {
-  color: var(--red);
-}
-
-.chart-actions {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-}
-
-.ticker-card {
-  width: 128px;
-  min-height: 74px;
-  background: rgba(255,255,255,0.92);
-  border: 1px solid rgba(0,0,0,0.04);
-  border-radius: 20px;
-  padding: 14px;
-  display: flex;
-  gap: 10px;
-  cursor: pointer;
-  transition: 0.2s ease;
-  box-shadow:
-    0 1px 2px rgba(0,0,0,0.02),
-    0 8px 24px rgba(0,0,0,0.03);
-}
-
-.ticker-card.active {
-  border-color: rgba(17,24,39,0.12);
-}
-
-.ticker-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  margin-top: 5px;
-}
-
-.ticker-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.ticker-name {
-  font-size: 11px;
-  color: #6b7280;
-  font-weight: 600;
-}
-
-.ticker-value {
-  font-size: 17px;
-  font-weight: 800;
-}
-
-.chart-wrapper {
-  position: relative;
-  height: 640px;
-}
-
-#currencyChart {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-@media (max-width: 1024px) {
-
-  .header-content {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .price-container {
-    flex-direction: column;
-  }
-
-  .chart-actions {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .ticker-card {
-    width: 100%;
-  }
-}
-
-@media (max-width: 768px) {
-
-  .header-content,
-  .main-content {
-    padding-inline: 20px;
-  }
-
-  h1 {
-    font-size: 42px;
-  }
-
-  .price {
-    font-size: 54px;
-  }
-
-  .chart-actions {
-    grid-template-columns: 1fr;
-  }
-
-  .chart-wrapper {
-    height: 480px;
-  }
-}
-```
-
----
-
-# app.js
-
-```javascript
-const SUPABASE_URL = "https://pqtbmnqsftqyvkhoszyy.supabase.co";
-
-const SUPABASE_KEY = "YOUR_SUPABASE_KEY";
-
-const PRODUCTS = {
-
-  cashew: {
-
-    table: "cashew1",
-
-    tickers: [
-      {
-        column: "usdlb_ww320",
-        name: "WW320 USD/LB",
-        short: "WW320",
-        color: "#111827"
-      }
-    ]
-  },
-
-  pistachio: {
-
-    table: "pistachio1",
-
-    tickers: [
-      {
-        column: "usdlb_std",
-        name: "Std. Size USX1 USDLB FAS Calif.",
-        short: "Std. Size",
-        color: "#111827"
-      },
-      {
-        column: "usdlb_large",
-        name: "Large Size USX1 USDLB FAS Calif.",
-        short: "Large Size",
-        color: "#2563eb"
-      },
-      {
-        column: "usdlb_kernel",
-        name: "Kernel W80 USX1 USDLB FAS Calif.",
-        short: "Kernel W80",
-        color: "#16a34a"
-      },
-      {
-        column: "eurkg_es2125",
-        name: "ES 21/25 EURKG EXW Toledo",
-        short: "ES 21/25",
-        color: "#7c3aed"
-      },
-      {
-        column: "eurkg_eskernel",
-        name: "ES Kernel EURKG EXW Toledo",
-        short: "ES Kernel",
-        color: "#ea580c"
-      }
-    ]
-  }
-};
-
-let currentProduct = "cashew";
-let globalData = [];
-let activeColumn = null;
-let chart = null;
-
-window.addEventListener("DOMContentLoaded", async () => {
-
-  setupProductButtons();
-  setupChart();
-
-  await loadProduct(currentProduct);
-});
-
-function setupProductButtons() {
-
-  document
-    .querySelectorAll(".product-switch")
-    .forEach(button => {
-
-      button.addEventListener("click", async () => {
-
-        document
-          .querySelectorAll(".product-switch")
-          .forEach(btn => btn.classList.remove("active"));
-
-        button.classList.add("active");
-
-        currentProduct = button.dataset.product;
-
-        await loadProduct(currentProduct);
-      });
-    });
-}
-
-async function loadProduct(productKey) {
-
-  const config = PRODUCTS[productKey];
-
-  activeColumn = config.tickers[0].column;
-
-  renderTickers(config.tickers);
-
-  await fetchData(config.table);
-
-  updateTickerValues();
-  updateUI();
-}
-
-function renderTickers(tickers) {
-
-  const container = document.getElementById("tickerContainer");
-
-  container.innerHTML = "";
-
-  tickers.forEach((ticker, index) => {
-
-    const card = document.createElement("div");
-
-    card.className = `ticker-card ${index === 0 ? 'active' : ''}`;
-
-    card.dataset.column = ticker.column;
-
-    card.innerHTML = `
-      <div
-        class="ticker-dot"
-        style="background:${ticker.color}"
-      ></div>
-
-      <div class="ticker-content">
-        <span class="ticker-name">${ticker.short}</span>
-        <span class="ticker-value"></span>
-      </div>
-    `;
-
-    card.addEventListener("click", () => {
-
-      document
-        .querySelectorAll(".ticker-card")
-        .forEach(c => c.classList.remove("active"));
-
-      card.classList.add("active");
-
-      activeColumn = ticker.column;
-
-      updateUI();
-    });
-
-    container.appendChild(card);
-  });
-}
-
-async function fetchData(table) {
-
-  const response = await fetch(
-    `${SUPABASE_URL}/rest/v1/${table}?select=*&order=fecha.asc&limit=10000`,
-    {
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${SUPABASE_KEY}`
-      }
-    }
-  );
-
-  globalData = await response.json();
-}
-
-function setupChart() {
-
-  const ctx = document
-    .getElementById("currencyChart")
-    .getContext("2d");
-
-  chart = new Chart(ctx, {
-
-    type: "line",
-
-    data: {
-      labels: [],
-      datasets: []
-    },
-
-    options: {
-
-      responsive: true,
-      maintainAspectRatio: false,
-
-      plugins: {
-        legend: {
-          display: false
-        }
-      },
-
-      scales: {
-
-        x: {
-          grid: {
-            display: false
-          }
-        },
-
-        y: {
-          position: "right"
-        }
-      }
-    }
-  });
-}
-
-function updateTickerValues() {
-
-  const latest = globalData[globalData.length - 1];
-
-  document
-    .querySelectorAll(".ticker-card")
-    .forEach(card => {
-
-      const value = Number(
-        latest[card.dataset.column]
-      );
-
-      card.querySelector(".ticker-value").textContent =
-        value.toFixed(2);
-    });
-}
-
-function updateChart() {
-
-  const labels = globalData.map(d => d.fecha);
-
-  const values = globalData.map(d => {
-
-    const value = Number(d[activeColumn]);
-
-    return isNaN(value) ? null : value;
-  });
-
-  chart.data.labels = labels;
-
-  chart.data.datasets = [
-    {
-      data: values,
-      borderColor: "#111827",
-      borderWidth: 2,
-      pointRadius: 0,
-      tension: 0.2
-    }
-  ];
-
-  chart.update();
-}
-
-function updateUI() {
-
-  updateChart();
-
-  const latest = globalData[globalData.length - 1];
-
-  const previous = globalData[globalData.length - 2];
-
-  const value = Number(latest[activeColumn]);
-
-  const prev = previous
-    ? Number(previous[activeColumn])
-    : value;
-
-  const ticker = PRODUCTS[currentProduct]
-    .tickers
-    .find(t => t.column === activeColumn);
-
-  document.getElementById("productTitle").textContent =
-    ticker.name;
-
-  document.getElementById("productPrice").textContent =
-    value.toFixed(2);
-
-  const change = ((value - prev) / prev) * 100;
-
-  const positive = change >= 0;
-
-  const changeEl =
-    document.getElementById("productChange");
-
-  changeEl.textContent =
-    `${positive ? '▲' : '▼'} ${Math.abs(change).toFixed(2)}% today`;
-
-  changeEl.className =
-    `change ${positive ? 'up' : 'down'}`;
-}
-```
