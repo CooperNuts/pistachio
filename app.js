@@ -1,41 +1,98 @@
 // ==============================
 // CONFIG
 // ==============================
-const SUPABASE_URL = "https://pqtbmnqsftqyvkhoszyy.supabase.co";
+const SUPABASE_URL =
+  "https://pqtbmnqsftqyvkhoszyy.supabase.co";
 
 const SUPABASE_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxdGJtbnFzZnRxeXZraG9zenl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU2NjEyMDgsImV4cCI6MjA4MTIzNzIwOH0.fS2Wp0lp-GEJXVUpfhcaFRQzxtOY7nhJNjTlpkRxQtA";
 
-const TABLE = "pistachio1";
+// ==============================
+// PRODUCTS
+// ==============================
+const PRODUCTS = {
 
-// ==============================
-// HITOS
-// ==============================
-const hitos = [
-  { fecha: "2023-10-02", texto: "Op. C23" },
-  { fecha: "2024-09-30", texto: "Op. C24" },
-  { fecha: "2025-09-29", texto: "Op. C25" }
-];
+  pistachio: {
 
-// ==============================
-// COLORS
-// ==============================
-const COLORS = {
-  usdlb_std: "#111827",
-  usdlb_large: "#2563eb",
-  usdlb_kernel: "#16a34a",
-  eurkg_es2125: "#7c3aed",
-  eurkg_eskernel: "#ea580c"
+    table: "pistachio1",
+
+    hitos: [
+      { fecha: "2023-10-02", texto: "Op. C23" },
+      { fecha: "2024-09-30", texto: "Op. C24" },
+      { fecha: "2025-09-29", texto: "Op. C25" }
+    ],
+
+    tickers: [
+
+      {
+        column: "usdlb_std",
+        label: "Std. Size",
+        fullName: "Std. Size USX1 USDLB FAS Calif.",
+        color: "#111827"
+      },
+
+      {
+        column: "usdlb_large",
+        label: "Large Size",
+        fullName: "Large Size USX1 USDLB FAS Calif.",
+        color: "#2563eb"
+      },
+
+      {
+        column: "usdlb_kernel",
+        label: "Kernel W80",
+        fullName: "Kernel W80 USX1 USDLB FAS Calif.",
+        color: "#16a34a"
+      },
+
+      {
+        column: "eurkg_es2125",
+        label: "ES 21/25",
+        fullName: "ES 21/25 EURKG EXW Toledo",
+        color: "#7c3aed"
+      },
+
+      {
+        column: "eurkg_eskernel",
+        label: "ES Kernel",
+        fullName: "ES Kernel EURKG EXW Toledo",
+        color: "#ea580c"
+      }
+    ]
+  },
+
+  cashew: {
+
+    table: "cashew1",
+
+    hitos: [],
+
+    tickers: [
+
+      {
+        column: "usdlb_ww320",
+        label: "WW320",
+        fullName: "Cashew WW320 USDLB",
+        color: "#b45309"
+      }
+
+    ]
+  }
 };
 
 // ==============================
 // STATE
 // ==============================
+let activeProduct = "pistachio";
+
 let globalData = [];
+
 let activeColumns = ["usdlb_std"];
 
 let chart = null;
+
 let resizeObserver = null;
+
 let resizeTimeout = null;
 
 // ==============================
@@ -59,24 +116,33 @@ function debounce(func, delay) {
 window.addEventListener("DOMContentLoaded", async () => {
 
   if (typeof Chart === "undefined") {
+
     console.error("Chart.js not loaded");
+
     return;
   }
 
   showLoadingState();
 
+  rebuildTickerMenu();
+
+  setupProductButtons();
+
   await fetchData();
 
   if (!globalData.length) {
+
     console.error("No data loaded");
+
     return;
   }
 
-  setupTickers();
   setupChart();
+
   setupResizeObserver();
 
   updateTickerValues();
+
   updateUI();
 });
 
@@ -87,8 +153,11 @@ async function fetchData() {
 
   try {
 
+    const table =
+      PRODUCTS[activeProduct].table;
+
     const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLE}?select=*&order=fecha.desc&limit=10000`,
+      `${SUPABASE_URL}/rest/v1/${table}?select=*&order=fecha.desc&limit=10000`,
       {
         headers: {
           apikey: SUPABASE_KEY,
@@ -100,19 +169,25 @@ async function fetchData() {
     const data = await response.json();
 
     if (!response.ok) {
+
       console.error("Supabase error:", data);
+
       return;
     }
 
     if (!Array.isArray(data) || !data.length) {
+
       console.error("Empty dataset");
+
       return;
     }
 
     globalData = data
       .filter(item => item.fecha)
       .filter(item => !isNaN(new Date(item.fecha)))
-      .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+      .sort((a, b) =>
+        new Date(a.fecha) - new Date(b.fecha)
+      );
 
   } catch (err) {
 
@@ -125,9 +200,112 @@ async function fetchData() {
 // ==============================
 function showLoadingState() {
 
-  document.getElementById("productTitle").textContent = "Loading...";
-  document.getElementById("productPrice").textContent = "--";
-  document.getElementById("productChange").textContent = "";
+  document.getElementById("productTitle")
+    .textContent = "Loading...";
+
+  document.getElementById("productPrice")
+    .textContent = "--";
+
+  document.getElementById("productChange")
+    .textContent = "";
+}
+
+// ==============================
+// PRODUCT BUTTONS
+// ==============================
+function setupProductButtons() {
+
+  const buttons =
+    document.querySelectorAll(".product-button");
+
+  buttons.forEach(button => {
+
+    button.addEventListener("click", async () => {
+
+      buttons.forEach(b =>
+        b.classList.remove("active")
+      );
+
+      button.classList.add("active");
+
+      activeProduct =
+        button.dataset.product;
+
+      showLoadingState();
+
+      rebuildTickerMenu();
+
+      await fetchData();
+
+      updateTickerValues();
+
+      updateUI();
+    });
+  });
+}
+
+// ==============================
+// REBUILD TICKER MENU
+// ==============================
+function rebuildTickerMenu() {
+
+  const container =
+    document.querySelector(".chart-actions");
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const tickers =
+    PRODUCTS[activeProduct].tickers;
+
+  tickers.forEach((ticker, index) => {
+
+    const card =
+      document.createElement("div");
+
+    card.className =
+      `ticker-card ${index === 0 ? "active" : ""}`;
+
+    card.dataset.column =
+      ticker.column;
+
+    card.dataset.name =
+      ticker.fullName;
+
+    card.setAttribute("role", "tab");
+
+    card.setAttribute(
+      "tabindex",
+      index === 0 ? "0" : "-1"
+    );
+
+    card.innerHTML = `
+
+      <div
+        class="ticker-dot"
+        style="background:${ticker.color}"
+      ></div>
+
+      <div class="ticker-content">
+
+        <span class="ticker-name">
+          ${ticker.label}
+        </span>
+
+        <span class="ticker-value"></span>
+
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  activeColumns = [
+    tickers[0].column
+  ];
+
+  setupTickers();
 }
 
 // ==============================
@@ -135,7 +313,8 @@ function showLoadingState() {
 // ==============================
 function setupTickers() {
 
-  const tickers = document.querySelectorAll(".ticker-card");
+  const tickers =
+    document.querySelectorAll(".ticker-card");
 
   tickers.forEach((ticker, index) => {
 
@@ -148,19 +327,27 @@ function setupTickers() {
       let nextIndex = index;
 
       if (e.key === "ArrowRight") {
-        nextIndex = (index + 1) % tickers.length;
+        nextIndex =
+          (index + 1) % tickers.length;
       }
 
       if (e.key === "ArrowLeft") {
-        nextIndex = (index - 1 + tickers.length) % tickers.length;
+        nextIndex =
+          (index - 1 + tickers.length)
+          % tickers.length;
       }
 
       if (nextIndex !== index) {
         tickers[nextIndex].focus();
       }
 
-      if (e.key === "Enter" || e.key === " ") {
+      if (
+        e.key === "Enter"
+        || e.key === " "
+      ) {
+
         e.preventDefault();
+
         setActiveTicker(ticker);
       }
     });
@@ -172,13 +359,17 @@ function setupTickers() {
 // ==============================
 function setActiveTicker(ticker) {
 
-  document.querySelectorAll(".ticker-card").forEach(t => {
-    t.classList.remove("active");
-  });
+  document
+    .querySelectorAll(".ticker-card")
+    .forEach(t => {
+      t.classList.remove("active");
+    });
 
   ticker.classList.add("active");
 
-  activeColumns = [ticker.dataset.column];
+  activeColumns = [
+    ticker.dataset.column
+  ];
 
   updateUI();
 }
@@ -190,20 +381,28 @@ function updateTickerValues() {
 
   if (!globalData.length) return;
 
-  const latest = globalData[globalData.length - 1];
+  const latest =
+    globalData[globalData.length - 1];
 
-  document.querySelectorAll(".ticker-card").forEach(card => {
+  document
+    .querySelectorAll(".ticker-card")
+    .forEach(card => {
 
-    const col = card.dataset.column;
+      const col =
+        card.dataset.column;
 
-    const value = Number(latest[col]);
+      const value =
+        Number(latest[col]);
 
-    const valueEl = card.querySelector(".ticker-value");
+      const valueEl =
+        card.querySelector(".ticker-value");
 
-    if (!isNaN(value)) {
-      valueEl.textContent = value.toFixed(2);
-    }
-  });
+      if (!isNaN(value)) {
+
+        valueEl.textContent =
+          value.toFixed(2);
+      }
+    });
 }
 
 // ==============================
@@ -216,24 +415,34 @@ function calculateSMA(values, period = 90) {
   for (let i = 0; i < values.length; i++) {
 
     if (i < period - 1) {
+
       result.push(null);
+
       continue;
     }
 
     let sum = 0;
+
     let count = 0;
 
     for (let j = 0; j < period; j++) {
 
       const value = values[i - j];
 
-      if (value !== null && !isNaN(value)) {
+      if (
+        value !== null
+        && !isNaN(value)
+      ) {
+
         sum += value;
+
         count++;
       }
     }
 
-    result.push(count ? sum / count : null);
+    result.push(
+      count ? sum / count : null
+    );
   }
 
   return result;
@@ -244,21 +453,27 @@ function calculateSMA(values, period = 90) {
 // ==============================
 function setupChart() {
 
-  const canvas = document.getElementById("currencyChart");
+  const canvas =
+    document.getElementById("currencyChart");
 
   if (!canvas) {
+
     console.error("Canvas not found");
+
     return;
   }
 
-  const ctx = canvas.getContext("2d");
+  const ctx =
+    canvas.getContext("2d");
 
   chart = new Chart(ctx, {
 
     type: "line",
 
     data: {
+
       labels: [],
+
       datasets: []
     },
 
@@ -298,12 +513,16 @@ function setupChart() {
 
         tooltip: {
 
-          backgroundColor: "rgba(255,255,255,0.98)",
+          backgroundColor:
+            "rgba(255,255,255,0.98)",
 
           titleColor: "#111827",
+
           bodyColor: "#374151",
 
-          borderColor: "rgba(0,0,0,0.06)",
+          borderColor:
+            "rgba(0,0,0,0.06)",
+
           borderWidth: 1,
 
           padding: 14,
@@ -326,14 +545,19 @@ function setupChart() {
 
             label: function(context) {
 
-              let label = context.dataset.label || "";
+              let label =
+                context.dataset.label || "";
 
               if (label) {
                 label += ": ";
               }
 
-              if (context.parsed.y !== null) {
-                label += context.parsed.y.toFixed(2);
+              if (
+                context.parsed.y !== null
+              ) {
+
+                label +=
+                  context.parsed.y.toFixed(2);
               }
 
               return label;
@@ -373,7 +597,10 @@ function setupChart() {
           grace: "10%",
 
           grid: {
-            color: "rgba(0,0,0,0.05)",
+
+            color:
+              "rgba(0,0,0,0.05)",
+
             drawBorder: false
           },
 
@@ -393,7 +620,8 @@ function setupChart() {
               weight: "600"
             },
 
-            callback: value => Number(value).toFixed(2)
+            callback: value =>
+              Number(value).toFixed(2)
           }
         },
 
@@ -402,6 +630,7 @@ function setupChart() {
           position: "left",
 
           min: 0,
+
           max: 1500000,
 
           grid: {
@@ -425,7 +654,8 @@ function setupChart() {
             },
 
             callback: value =>
-              value.toLocaleString("es-ES") + " MT"
+              value.toLocaleString("es-ES")
+              + " MT"
           }
         }
       }
@@ -438,19 +668,22 @@ function setupChart() {
 // ==============================
 function setupResizeObserver() {
 
-  const wrapper = document.querySelector(".chart-wrapper");
+  const wrapper =
+    document.querySelector(".chart-wrapper");
 
   if (!wrapper) return;
 
-  const debouncedResize = debounce(() => {
+  const debouncedResize =
+    debounce(() => {
 
-    if (chart) {
-      chart.resize();
-    }
+      if (chart) {
+        chart.resize();
+      }
 
-  }, 250);
+    }, 250);
 
-  resizeObserver = new ResizeObserver(debouncedResize);
+  resizeObserver =
+    new ResizeObserver(debouncedResize);
 
   resizeObserver.observe(wrapper);
 }
@@ -460,43 +693,57 @@ function setupResizeObserver() {
 // ==============================
 function updateChart() {
 
-  if (!chart || !globalData.length) return;
+  if (!chart || !globalData.length) {
+    return;
+  }
 
   const sorted = [...globalData]
     .filter(d => d.fecha)
-    .filter(d => !isNaN(new Date(d.fecha)))
-    .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+    .filter(d =>
+      !isNaN(new Date(d.fecha))
+    )
+    .sort((a, b) =>
+      new Date(a.fecha)
+      - new Date(b.fecha)
+    );
 
-  // ==========================
-  // LAST 4 YEARS ONLY
-  // ==========================
-  const lastDate = new Date(
-    sorted[sorted.length - 1].fecha
-  );
+  const lastDate =
+    new Date(
+      sorted[sorted.length - 1].fecha
+    );
 
-  const minDate = new Date(lastDate);
+  const minDate =
+    new Date(lastDate);
 
   minDate.setFullYear(
     minDate.getFullYear() - 4
   );
 
-  const filtered = sorted.filter(d => {
-    return new Date(d.fecha) >= minDate;
-  });
+  const filtered =
+    sorted.filter(d => {
+      return (
+        new Date(d.fecha) >= minDate
+      );
+    });
 
-  chart.data.labels = filtered.map(d => d.fecha);
+  chart.data.labels =
+    filtered.map(d => d.fecha);
 
   chart.data.datasets = [];
 
   // ==========================
   // STOCK BARS
   // ==========================
-  const stockValues = filtered.map(d => {
+  const stockValues =
+    filtered.map(d => {
 
-    const value = Number(d.stock_MT);
+      const value =
+        Number(d.stock_MT);
 
-    return isNaN(value) ? null : value;
-  });
+      return isNaN(value)
+        ? null
+        : value;
+    });
 
   chart.data.datasets.push({
 
@@ -508,9 +755,11 @@ function updateChart() {
 
     yAxisID: "yLeft",
 
-    backgroundColor: "rgba(17,24,39,0.08)",
+    backgroundColor:
+      "rgba(17,24,39,0.08)",
 
-    borderColor: "rgba(17,24,39,0.10)",
+    borderColor:
+      "rgba(17,24,39,0.12)",
 
     borderWidth: 0.6,
 
@@ -528,20 +777,31 @@ function updateChart() {
   // ==========================
   activeColumns.forEach(col => {
 
-    const ticker = document.querySelector(
-      `.ticker-card[data-column="${col}"]`
-    );
+    const ticker =
+      document.querySelector(
+        `.ticker-card[data-column="${col}"]`
+      );
 
-    const label = ticker
-      ? ticker.dataset.name
-      : col;
+    const label =
+      ticker
+        ? ticker.dataset.name
+        : col;
 
-    const values = filtered.map(d => {
+    const productTicker =
+      PRODUCTS[activeProduct]
+        .tickers
+        .find(t => t.column === col);
 
-      const value = Number(d[col]);
+    const values =
+      filtered.map(d => {
 
-      return isNaN(value) ? null : value;
-    });
+        const value =
+          Number(d[col]);
+
+        return isNaN(value)
+          ? null
+          : value;
+      });
 
     chart.data.datasets.push({
 
@@ -555,7 +815,8 @@ function updateChart() {
 
       pointRadius: 0,
 
-      borderColor: COLORS[col],
+      borderColor:
+        productTicker.color,
 
       fill: false,
 
@@ -565,7 +826,8 @@ function updateChart() {
     // ==========================
     // SMA
     // ==========================
-    const sma = calculateSMA(values, 90);
+    const sma =
+      calculateSMA(values, 90);
 
     chart.data.datasets.push({
 
@@ -581,7 +843,8 @@ function updateChart() {
 
       pointRadius: 0,
 
-      borderColor: "rgba(17,24,39,0.18)",
+      borderColor:
+        "rgba(17,24,39,0.18)",
 
       order: 1
     });
@@ -592,15 +855,20 @@ function updateChart() {
   // ==========================
   const annotations = {};
 
+  const hitos =
+    PRODUCTS[activeProduct].hitos;
+
   hitos.forEach((hito, i) => {
 
-    const point = sorted.find(
-      d => d.fecha === hito.fecha
-    );
+    const point =
+      sorted.find(
+        d => d.fecha === hito.fecha
+      );
 
     if (!point) return;
 
-    const y = Number(point[activeColumns[0]]);
+    const y =
+      Number(point[activeColumns[0]]);
 
     if (isNaN(y)) return;
 
@@ -609,9 +877,11 @@ function updateChart() {
       type: "line",
 
       xMin: hito.fecha,
+
       xMax: hito.fecha,
 
-      borderColor: "rgba(220,38,38,0.12)",
+      borderColor:
+        "rgba(220,38,38,0.12)",
 
       borderWidth: 1
     };
@@ -621,6 +891,7 @@ function updateChart() {
       type: "point",
 
       xValue: hito.fecha,
+
       yValue: y,
 
       backgroundColor: "#dc2626",
@@ -633,11 +904,14 @@ function updateChart() {
       type: "label",
 
       xValue: hito.fecha,
+
       yValue: y,
 
-      content: `${hito.texto} · ${y.toFixed(2)}`,
+      content:
+        `${hito.texto} · ${y.toFixed(2)}`,
 
-      backgroundColor: "rgba(255,255,255,0)",
+      backgroundColor:
+        "rgba(255,255,255,0)",
 
       borderWidth: 0,
 
@@ -655,7 +929,8 @@ function updateChart() {
     };
   });
 
-  chart.options.plugins.annotation.annotations = annotations;
+  chart.options.plugins.annotation.annotations =
+    annotations;
 
   chart.update();
 }
@@ -669,35 +944,50 @@ function updateUI() {
 
   updateChart();
 
-  const latest = globalData[globalData.length - 1];
+  const latest =
+    globalData[globalData.length - 1];
 
-  const prev = globalData[globalData.length - 2];
+  const prev =
+    globalData[globalData.length - 2];
 
-  const col = activeColumns[0];
+  const col =
+    activeColumns[0];
 
-  const value = Number(latest[col]);
+  const value =
+    Number(latest[col]);
 
-  const prevValue = prev
-    ? Number(prev[col])
-    : value;
+  const prevValue =
+    prev
+      ? Number(prev[col])
+      : value;
 
-  const ticker = document.querySelector(
-    `.ticker-card[data-column="${col}"]`
-  );
+  const ticker =
+    document.querySelector(
+      `.ticker-card[data-column="${col}"]`
+    );
 
-  const label = ticker
-    ? ticker.dataset.name
-    : col;
+  const label =
+    ticker
+      ? ticker.dataset.name
+      : col;
 
-  document.getElementById("productTitle").textContent = label;
+  document
+    .getElementById("productTitle")
+    .textContent = label;
 
-  document.getElementById("productPrice").textContent =
-    value.toFixed(2);
+  document
+    .getElementById("productPrice")
+    .textContent =
+      value.toFixed(2);
 
   const change =
-    ((value - prevValue) / prevValue) * 100;
+    (
+      (value - prevValue)
+      / prevValue
+    ) * 100;
 
-  const isPositive = change >= 0;
+  const isPositive =
+    change >= 0;
 
   const changeEl =
     document.getElementById("productChange");
