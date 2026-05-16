@@ -582,21 +582,21 @@ p {
 
 .footer {
 
-  max-width: 1520px;
+  max-width: 1440px;
 
   margin: 0 auto;
 
-  padding: 48px 80px 64px;
+  padding: 48px 40px 64px;
 
   border-top: 1px solid rgba(0,0,0,0.05);
 
-  display: flex;
+  display: grid;
 
-  align-items: flex-start;
+  grid-template-columns: 220px 1fr;
 
-  justify-content: flex-start;
+  column-gap: 36px;
 
-  gap: 32px;
+  align-items: start;
 }
 
 /* COPYRIGHT */
@@ -627,7 +627,9 @@ p {
 
 .footer-right {
 
-  max-width: 920px;
+  width: 100%;
+
+  max-width: 100%;;
 }
 
 .disclaimer {
