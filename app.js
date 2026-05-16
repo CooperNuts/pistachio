@@ -670,6 +670,23 @@ function updateChart() {
           t.column === activeColumn
       );
 
+  /* ======================================
+     MOVING AVERAGE COLOR
+  ====================================== */
+
+  const movingAverageColor =
+    currentProduct === "cashew"
+      ? "rgba(17,24,39,0.28)"
+      : activeColumn === "usdlb_large"
+      ? "rgba(37,99,235,0.28)"
+      : activeColumn === "usdlb_kernel"
+      ? "rgba(22,163,74,0.28)"
+      : activeColumn === "eurkg_es2125"
+      ? "rgba(124,58,237,0.28)"
+      : activeColumn === "eurkg_eskernel"
+      ? "rgba(234,88,12,0.28)"
+      : "rgba(17,24,39,0.28)";
+
   chart.data.labels =
     labels;
 
@@ -706,20 +723,24 @@ function updateChart() {
 
       categoryPercentage: 0.92,
 
-      order: 2
+      order: 3
     });
   }
 
+  /* ======================================
+     PRICE LINE
+  ====================================== */
+
   chart.data.datasets.push({
 
-    label: `${ticker.name} · 3M MA`,
+    label: ticker.name,
 
-    data: values,
+    data: rawValues,
 
     borderColor:
       ticker.color,
 
-    borderWidth: 2,
+    borderWidth: 2.2,
 
     pointRadius: 0,
 
@@ -728,6 +749,32 @@ function updateChart() {
     fill: false,
 
     order: 1
+  });
+
+  /* ======================================
+     3M MOVING AVERAGE
+  ====================================== */
+
+  chart.data.datasets.push({
+
+    label: `${ticker.name} · 3M MA`,
+
+    data: values,
+
+    borderColor:
+      movingAverageColor,
+
+    borderWidth: 2,
+
+    pointRadius: 0,
+
+    tension: 0.32,
+
+    fill: false,
+
+    borderDash: [6, 6],
+
+    order: 2
   });
 
   const annotations = {};
