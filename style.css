@@ -126,7 +126,7 @@ p {
 
   align-items: flex-start;
 
-   padding-left: 12px;
+  padding-left: 12px;
 }
 
 .header-text h1 {
@@ -144,7 +144,7 @@ p {
 
   font-weight: 500;
 
-   padding-left: 0px
+  padding-left: 0px;
 }
 
 /* ========================================
@@ -163,9 +163,9 @@ p {
 
 .product-switch {
 
-   min-width: 140px;
-   
-   height: 46px;
+  min-width: 140px;
+
+  height: 46px;
 
   padding-inline: 32px;
 
@@ -586,17 +586,17 @@ p {
 
   margin: 0 auto;
 
-  padding: 48px 80px 64px; /* MISMA SANGRÍA */
+  padding: 48px 80px 64px;
 
   border-top: 1px solid rgba(0,0,0,0.05);
 
   display: flex;
 
-  justify-content: space-between;
-
   align-items: flex-start;
 
-  gap: 80px;
+  justify-content: flex-start;
+
+  gap: 32px;
 }
 
 /* COPYRIGHT */
@@ -605,14 +605,7 @@ p {
 
   flex-shrink: 0;
 
-  min-width: 220px;
-}
-
-.footer-left {
-
-  flex-shrink: 0;
-
-  width: 240px;
+  width: auto;
 
   display: flex;
 
@@ -628,7 +621,6 @@ p {
   line-height: 1.8;
 
   color: #9ca3af;
-}
 }
 
 /* DISCLAIMER */
@@ -783,6 +775,10 @@ p {
   .footer {
 
     padding-inline: 20px;
+
+    flex-direction: column;
+
+    gap: 20px;
   }
 }
 
