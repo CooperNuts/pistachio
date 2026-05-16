@@ -44,20 +44,6 @@ const PRODUCTS = {
         color: "#111827"
       },
 
-      {
-        column: "usdlb_ww240",
-        name: "WW240 USD/LB",
-        short: "WW240",
-        color: "#2563eb"
-      },
-
-      {
-        column: "usdlb_lp",
-        name: "Large Pieces USD/LB",
-        short: "LP",
-        color: "#16a34a"
-      }
-
     ]
   },
 
