@@ -159,9 +159,11 @@ p {
 
 .product-switch {
 
-  height: 44px;
+   min-width: 140px;
+   
+   height: 46px;
 
-  padding-inline: 22px;
+  padding-inline: 32px;
 
   border-radius: 999px;
 
