@@ -172,44 +172,26 @@ function setupProductButtons() {
   });
 }
 
-//
-// ==========================================
-// LOAD PRODUCT
-// ==========================================
-//
+/* ==========================================
+   LOAD PRODUCT
+========================================== */
 
 async function loadProduct(productKey) {
 
   const config =
     PRODUCTS[productKey];
 
-  // RESET VISUAL
-  document.getElementById(
-    "productTitle"
-  ).textContent = "Loading...";
+  showLoadingState();
 
-  document.getElementById(
-    "productPrice"
-  ).textContent = "--";
-
-  document.getElementById(
-    "productChange"
-  ).textContent = "";
-
-  // RESET DATA
   globalData = [];
 
-  // ACTIVE COLUMN
   activeColumn =
     config.tickers[0].column;
 
-  // RENDER TICKERS
   renderTickers(config.tickers);
 
-  // FETCH TABLE
   await fetchData(config.table);
 
-  // VALIDATION
   if (!globalData.length) {
 
     console.error(
@@ -220,7 +202,6 @@ async function loadProduct(productKey) {
     return;
   }
 
-  // UPDATE
   updateTickerValues();
 
   updateUI();
@@ -235,6 +216,11 @@ async function fetchData(table) {
   try {
 
     globalData = [];
+
+    console.log(
+      "Loading table:",
+      table
+    );
 
     const response = await fetch(
 
@@ -253,6 +239,11 @@ async function fetchData(table) {
 
     const data =
       await response.json();
+
+    console.log(
+      "Supabase response:",
+      data
+    );
 
     if (!response.ok) {
 
@@ -639,16 +630,31 @@ function updateChart() {
         : value;
     });
 
-  const stockValues =
-    globalData.map(d => {
+  /* ======================================
+     OPTIONAL STOCK DATA
+  ====================================== */
 
-      const value =
-        Number(d.stock_MT);
+  const hasStockColumn =
+    globalData.some(
+      row =>
+        row.stock_MT !== undefined
+    );
 
-      return isNaN(value)
-        ? null
-        : value;
-    });
+  let stockValues = [];
+
+  if (hasStockColumn) {
+
+    stockValues =
+      globalData.map(d => {
+
+        const value =
+          Number(d.stock_MT);
+
+        return isNaN(value)
+          ? null
+          : value;
+      });
+  }
 
   const ticker =
     PRODUCTS[currentProduct]
@@ -669,12 +675,7 @@ function updateChart() {
      STOCK BARS
   ====================================== */
 
-  const hasStock =
-    stockValues.some(
-      value => value !== null
-    );
-
-  if (hasStock) {
+  if (hasStockColumn) {
 
     chart.data.datasets.push({
 
