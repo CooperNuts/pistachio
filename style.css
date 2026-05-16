@@ -67,7 +67,7 @@ h3 {
 }
 
 h1 {
-  font-size: 46px;
+  font-size: 48px;
   line-height: 1;
   font-weight: 800;
 }
@@ -104,7 +104,7 @@ p {
 
   margin: 0 auto;
 
-  padding-inline: 40px;
+  padding-inline: 60px;
 
   display: flex;
 
@@ -125,6 +125,8 @@ p {
   flex-direction: column;
 
   align-items: flex-start;
+
+   padding-left: 12px;
 }
 
 .header-text h1 {
@@ -141,6 +143,8 @@ p {
   color: var(--muted);
 
   font-weight: 500;
+
+   padding-left: 2px
 }
 
 /* ========================================
@@ -175,7 +179,7 @@ p {
 
   font-family: inherit;
 
-  font-size: 18px;
+  font-size: 16px;
 
   font-weight: 700;
 
