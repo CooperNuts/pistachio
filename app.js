@@ -215,7 +215,7 @@ async function fetchData(table) {
 
     const response = await fetch(
 
-      `${SUPABASE_URL}/rest/v1/${table}?select=*&order=fecha.asc&limit=10000`,
+      `${SUPABASE_URL}/rest/v1/${table}?select=*&order=fecha.desc&limit=10000`,
 
       {
         headers: {
