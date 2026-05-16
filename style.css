@@ -608,13 +608,27 @@ p {
   min-width: 220px;
 }
 
+.footer-left {
+
+  flex-shrink: 0;
+
+  width: 240px;
+
+  display: flex;
+
+  align-items: flex-start;
+}
+
 .footer-left p {
+
+  white-space: nowrap;
 
   font-size: 14px;
 
-  color: #9ca3af;
-
   line-height: 1.8;
+
+  color: #9ca3af;
+}
 }
 
 /* DISCLAIMER */
