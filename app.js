@@ -181,7 +181,17 @@ async function loadProduct(productKey) {
   const config =
     PRODUCTS[productKey];
 
-  showLoadingState();
+  document.getElementById(
+    "productTitle"
+  ).textContent = "Loading...";
+
+  document.getElementById(
+    "productPrice"
+  ).textContent = "--";
+
+  document.getElementById(
+    "productChange"
+  ).textContent = "";
 
   globalData = [];
 
@@ -217,11 +227,6 @@ async function fetchData(table) {
 
     globalData = [];
 
-    console.log(
-      "Loading table:",
-      table
-    );
-
     const response = await fetch(
 
       `${SUPABASE_URL}/rest/v1/${table}?select=*&order=fecha.desc&limit=10000`,
@@ -239,11 +244,6 @@ async function fetchData(table) {
 
     const data =
       await response.json();
-
-    console.log(
-      "Supabase response:",
-      data
-    );
 
     if (!response.ok) {
 
@@ -291,28 +291,6 @@ async function fetchData(table) {
       err
     );
   }
-}
-
-/* ==========================================
-   LOADING STATE
-========================================== */
-
-function showLoadingState() {
-
-  document.getElementById(
-    "productTitle"
-  ).textContent =
-    "Loading...";
-
-  document.getElementById(
-    "productPrice"
-  ).textContent =
-    "--";
-
-  document.getElementById(
-    "productChange"
-  ).textContent =
-    "";
 }
 
 /* ==========================================
@@ -617,44 +595,70 @@ function updateChart() {
       d => d.fecha
     );
 
+  /* ======================================
+     RAW VALUES
+  ====================================== */
+
+  const rawValues =
+    globalData.map(d => {
+
+      const raw =
+        d[activeColumn];
+
+      if (
+        raw === null ||
+        raw === undefined ||
+        raw === ""
+      ) {
+        return null;
+      }
+
+      const value =
+        parseFloat(raw);
+
+      return Number.isFinite(value)
+        ? value
+        : null;
+    });
+
+  /* ======================================
+     3M MOVING AVERAGE
+  ====================================== */
+
   const values =
+    rawValues.map((_, index) => {
+
+      const window =
+        rawValues
+          .slice(
+            Math.max(0, index - 89),
+            index + 1
+          )
+          .filter(v => v !== null);
+
+      if (!window.length) {
+        return null;
+      }
+
+      const avg =
+        window.reduce(
+          (sum, value) => sum + value,
+          0
+        ) / window.length;
+
+      return avg;
+    });
+
+  const stockValues =
     globalData.map(d => {
 
       const value =
-        Number(
-          d[activeColumn]
-        );
+        Number(d.stock_MT);
 
       return isNaN(value)
         ? null
         : value;
     });
-
-  /* ======================================
-     OPTIONAL STOCK DATA
-  ====================================== */
-
-  const hasStockColumn =
-    globalData.some(
-      row =>
-        row.stock_MT !== undefined
-    );
-
-  let stockValues = [];
-
-  if (hasStockColumn) {
-
-    stockValues =
-      globalData.map(d => {
-
-        const value =
-          Number(d.stock_MT);
-
-        return isNaN(value)
-          ? null
-          : value;
-      });
-  }
 
   const ticker =
     PRODUCTS[currentProduct]
@@ -671,11 +675,12 @@ function updateChart() {
 
   chart.data.datasets = [];
 
-  /* ======================================
-     STOCK BARS
-  ====================================== */
+  const hasStock =
+    stockValues.some(
+      value => value !== null
+    );
 
-  if (hasStockColumn) {
+  if (hasStock) {
 
     chart.data.datasets.push({
 
@@ -705,13 +710,9 @@ function updateChart() {
     });
   }
 
-  /* ======================================
-     MAIN LINE
-  ====================================== */
-
   chart.data.datasets.push({
 
-    label: ticker.name,
+    label: `${ticker.name} · 3M MA`,
 
     data: values,
 
@@ -728,10 +729,6 @@ function updateChart() {
 
     order: 1
   });
-
-  /* ======================================
-     ANNOTATIONS
-  ====================================== */
 
   const annotations = {};
 
