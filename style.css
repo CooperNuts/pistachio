@@ -445,14 +445,14 @@ p {
 
   width: 100%;
 
-  min-height: 680px;
+  min-height: 600px;
 }
 
 #currencyChart {
 
   width: 100% !important;
 
-  height: 680px !important;
+  height: 600px !important;
 }
 
 /* ========================================
