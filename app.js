@@ -172,32 +172,55 @@ function setupProductButtons() {
   });
 }
 
-/* ==========================================
-   LOAD PRODUCT
-========================================== */
+//
+// ==========================================
+// LOAD PRODUCT
+// ==========================================
+//
 
 async function loadProduct(productKey) {
 
   const config =
     PRODUCTS[productKey];
 
-  if (!config) {
-    console.error(
-      "Product config not found:",
-      productKey
-    );
-    return;
-  }
+  // RESET VISUAL
+  document.getElementById(
+    "productTitle"
+  ).textContent = "Loading...";
 
+  document.getElementById(
+    "productPrice"
+  ).textContent = "--";
+
+  document.getElementById(
+    "productChange"
+  ).textContent = "";
+
+  // RESET DATA
+  globalData = [];
+
+  // ACTIVE COLUMN
   activeColumn =
     config.tickers[0].column;
 
-  showLoadingState();
-
+  // RENDER TICKERS
   renderTickers(config.tickers);
 
+  // FETCH TABLE
   await fetchData(config.table);
 
+  // VALIDATION
+  if (!globalData.length) {
+
+    console.error(
+      "No data returned from:",
+      config.table
+    );
+
+    return;
+  }
+
+  // UPDATE
   updateTickerValues();
 
   updateUI();
