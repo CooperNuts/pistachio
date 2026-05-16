@@ -579,37 +579,58 @@ p {
 /* ========================================
    FOOTER
 ======================================== */
+
 .footer {
 
-  margin-top: 80px;
+  max-width: 1440px;
 
-  padding: 48px 32px 32px;
+  margin: 0 auto;
 
-  text-align: left;
+  padding: 48px 80px 64px; /* MISMA SANGRÍA */
 
-  background: var(--bg);
+  border-top: 1px solid rgba(0,0,0,0.05);
 
-  border-top: 1px solid var(--border);
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  gap: 80px;
 }
 
-.footer p {
+/* COPYRIGHT */
 
-  color: #9ca3af;
+.footer-left {
+
+  flex-shrink: 0;
+
+  min-width: 220px;
+}
+
+.footer-left p {
 
   font-size: 14px;
+
+  color: #9ca3af;
 
   line-height: 1.8;
 }
 
+/* DISCLAIMER */
+
+.footer-right {
+
+  max-width: 920px;
+}
+
 .disclaimer {
 
-  margin-top: 14px;
+  font-size: 14px;
 
-  color: var(--muted);
+  line-height: 2;
 
-  max-width: 1200px;
-
-  margin-inline: auto;
+  color: #9ca3af;
 }
 
 /* ========================================
