@@ -228,18 +228,16 @@ async function fetchData(table) {
     globalData = [];
 
     const response = await fetch(
-
-      `${SUPABASE_URL}/rest/v1/${table}?select=*&order=fecha.desc&limit=10000`,
-
-      {
-        headers: {
-
-          apikey: SUPABASE_KEY,
-
-          Authorization:
-            `Bearer ${SUPABASE_KEY}`
-        }
-      }
+  `${SUPABASE_URL}/rest/v1/${table}?select=*`,
+  {
+    method: "GET",
+    headers: {
+      "apikey": SUPABASE_KEY,
+      "Authorization": `Bearer ${SUPABASE_KEY}`,
+      "Content-Type": "application/json",
+      "Prefer": "return=representation"
+    }
+  }
     );
 
     const data =
