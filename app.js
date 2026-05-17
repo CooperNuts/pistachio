@@ -456,11 +456,6 @@ function setupChart() {
           display: false
         },
 
-        annotation: {
-
-          annotations: {}
-        },
-
         tooltip: {
 
           backgroundColor:
@@ -574,10 +569,6 @@ function updateChart() {
       d => d.fecha
     );
 
-  /* ======================================
-     RAW VALUES
-  ====================================== */
-
   const rawValues =
     globalData.map(d => {
 
@@ -599,10 +590,6 @@ function updateChart() {
         ? value
         : null;
     });
-
-  /* ======================================
-     3M MOVING AVERAGE
-  ====================================== */
 
   const values =
     rawValues.map((_, index) => {
@@ -665,10 +652,6 @@ function updateChart() {
 
   chart.data.datasets = [];
 
-  /* ======================================
-     STOCK BARS
-  ====================================== */
-
   const hasStock =
     stockValues.some(
       value => value !== null
@@ -707,10 +690,6 @@ function updateChart() {
     });
   }
 
-  /* ======================================
-     PRICE LINE
-  ====================================== */
-
   chart.data.datasets.push({
 
     label: ticker.name,
@@ -730,10 +709,6 @@ function updateChart() {
 
     order: 1
   });
-
-  /* ======================================
-     3M MOVING AVERAGE
-  ====================================== */
 
   chart.data.datasets.push({
 
@@ -756,94 +731,6 @@ function updateChart() {
 
     order: 2
   });
-
-  const annotations = {};
-
-  PRODUCTS[currentProduct]
-    .hitos
-    .forEach((hito, i) => {
-
-      const point =
-        globalData.find(
-          d =>
-            d.fecha === hito.fecha
-        );
-
-      if (!point) return;
-
-      const y =
-        Number(
-          point[activeColumn]
-        );
-
-      if (isNaN(y)) return;
-
-      annotations[
-        `line_${i}`
-      ] = {
-
-        type: "line",
-
-        xMin: hito.fecha,
-
-        xMax: hito.fecha,
-
-        borderColor:
-          "rgba(220,38,38,0.12)",
-
-        borderWidth: 1
-      };
-
-      annotations[
-        `point_${i}`
-      ] = {
-
-        type: "point",
-
-        xValue: hito.fecha,
-
-        yValue: y,
-
-        backgroundColor:
-          "#dc2626",
-
-        radius: 3
-      };
-
-      annotations[
-        `label_${i}`
-      ] = {
-
-        type: "label",
-
-        xValue: hito.fecha,
-
-        yValue: y,
-
-        content:
-          `${hito.texto} · ${y.toFixed(2)}`,
-
-        backgroundColor:
-          "rgba(255,255,255,0)",
-
-        borderWidth: 0,
-
-        color: "#dc2626",
-
-        font: {
-          size: 10,
-          family: "Manrope",
-          weight: "700"
-        },
-
-        padding: 4,
-
-        yAdjust: -12
-      };
-    });
-
-  chart.options.plugins.annotation.annotations =
-    annotations;
 
   chart.update();
 }
@@ -927,7 +814,7 @@ function updateUI() {
 
     className = "up";
   }
- 
+
   changeEl.textContent =
     `${symbol} ${Math.abs(change).toFixed(2)}% today`;
 
