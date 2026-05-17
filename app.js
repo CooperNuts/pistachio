@@ -927,7 +927,7 @@ function updateUI() {
 
     className = "up";
   }
-
+ 
   changeEl.textContent =
     `${symbol} ${Math.abs(change).toFixed(2)}% today`;
 
