@@ -11,7 +11,7 @@ const SUPABASE_URL =
   "https://pqtbmnqsftqyvkhoszyy.supabase.co";
 
 const SUPABASE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxdGJtbnFzZnRxeXZraG9zenl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU2NjEyMDgsImV4cCI6MjA4MTIzNzIwOH0.fS2Wp0lp-GEJXVUpfhcaFRQzxtOY7nhJNjTlpkRxQtA";
+  "YOUR_SUPABASE_KEY";
 
 /* ==========================================
    PRODUCTS CONFIG
@@ -479,30 +479,7 @@ function setupChart() {
 
           padding: 14,
 
-          displayColors: true,
-
-          callbacks: {
-
-            label: function(context) {
-
-              let label =
-                context.dataset.label || "";
-
-              if (label) {
-                label += ": ";
-              }
-
-              if (
-                context.parsed.y !== null
-              ) {
-
-                label +=
-                  context.parsed.y.toFixed(2);
-              }
-
-              return label;
-            }
-          }
+          displayColors: true
         }
       },
 
@@ -555,6 +532,8 @@ function setupChart() {
         yLeft: {
 
           position: "left",
+
+          display: true,
 
           grid: {
 
@@ -662,17 +641,11 @@ function updateChart() {
 
   const ticker =
     PRODUCTS[currentProduct]
-
       .tickers
-
       .find(
         t =>
           t.column === activeColumn
       );
-
-  /* ======================================
-     MOVING AVERAGE COLOR
-  ====================================== */
 
   const movingAverageColor =
     currentProduct === "cashew"
@@ -692,45 +665,45 @@ function updateChart() {
 
   chart.data.datasets = [];
 
-  cconst hasStock =
-  stockValues.some(
-    value => value !== null
-  );
+  /* ======================================
+     STOCK BARS
+  ====================================== */
 
-/* SHOW / HIDE LEFT AXIS */
+  const hasStock =
+    stockValues.some(
+      value => value !== null
+    );
 
-chart.options.scales.yLeft.display =
-  hasStock;
+  chart.options.scales.yLeft.display =
+    hasStock;
 
-if (hasStock) {
+  if (hasStock) {
 
-  chart.data.datasets.push({
+    chart.data.datasets.push({
 
-    type: "bar",
+      type: "bar",
 
-    label: "Stock MT",
+      label: "Stock MT",
 
-    data: stockValues,
+      data: stockValues,
 
-    yAxisID: "yLeft",
+      yAxisID: "yLeft",
 
-    backgroundColor:
-      "rgba(17,24,39,0.08)",
+      backgroundColor:
+        "rgba(17,24,39,0.08)",
 
-    borderColor:
-      "rgba(17,24,39,0.12)",
+      borderColor:
+        "rgba(17,24,39,0.12)",
 
-    borderWidth: 1,
+      borderWidth: 1,
 
-    borderRadius: 2,
+      borderRadius: 2,
 
-    barPercentage: 0.72,
+      barPercentage: 0.72,
 
-    categoryPercentage: 0.92,
+      categoryPercentage: 0.92,
 
-    order: 2
-  });
-}
+      order: 3
     });
   }
 
@@ -934,31 +907,30 @@ function updateUI() {
       : 0;
 
   const changeEl =
-  document.getElementById(
-    "productChange"
-  );
+    document.getElementById(
+      "productChange"
+    );
 
-let symbol = "=";
-let className = "neutral";
+  let symbol = "=";
+  let className = "neutral";
 
-if (change > 0) {
+  if (change > 0) {
 
-  symbol = "▲";
+    symbol = "▲";
 
-  className = "down"; // ROJO
-}
+    className = "down";
+  }
 
-else if (change < 0) {
+  else if (change < 0) {
 
-  symbol = "▼";
+    symbol = "▼";
 
-  className = "up"; // VERDE
-}
+    className = "up";
+  }
 
-changeEl.textContent =
-  `${symbol} ${Math.abs(change).toFixed(2)}% today`;
+  changeEl.textContent =
+    `${symbol} ${Math.abs(change).toFixed(2)}% today`;
 
-changeEl.className =
-  `change ${className}`;
-    }`;
+  changeEl.className =
+    `change ${className}`;
 }
