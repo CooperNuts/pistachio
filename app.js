@@ -926,21 +926,32 @@ function updateUI() {
         / previousValue) * 100
       : 0;
 
-  const positive =
-    change >= 0;
-
   const changeEl =
-    document.getElementById(
-      "productChange"
-    );
+  document.getElementById(
+    "productChange"
+  );
 
-  changeEl.textContent =
-    `${positive ? "▲" : "▼"} ${Math.abs(change).toFixed(2)}% today`;
+let symbol = "=";
+let className = "neutral";
 
-  changeEl.className =
-    `change ${
-      positive
-        ? "up"
-        : "down"
+if (change > 0) {
+
+  symbol = "▲";
+
+  className = "down"; // ROJO
+}
+
+else if (change < 0) {
+
+  symbol = "▼";
+
+  className = "up"; // VERDE
+}
+
+changeEl.textContent =
+  `${symbol} ${Math.abs(change).toFixed(2)}% today`;
+
+changeEl.className =
+  `change ${className}`;
     }`;
 }
