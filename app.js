@@ -33,7 +33,7 @@ const PRODUCTS = {
 
       {
         column: "usdlb_ww320",
-        name: "WW320 USD/LB Vietnam CFR Europe",
+        name: "WW320 Vietnam USD/LB CFR Europe",
         short: "WW320",
         color: "#111827"
       }
