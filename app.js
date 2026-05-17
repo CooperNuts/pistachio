@@ -692,38 +692,45 @@ function updateChart() {
 
   chart.data.datasets = [];
 
-  const hasStock =
-    stockValues.some(
-      value => value !== null
-    );
+  cconst hasStock =
+  stockValues.some(
+    value => value !== null
+  );
 
-  if (hasStock) {
+/* SHOW / HIDE LEFT AXIS */
 
-    chart.data.datasets.push({
+chart.options.scales.yLeft.display =
+  hasStock;
 
-      type: "bar",
+if (hasStock) {
 
-      label: "Stock MT",
+  chart.data.datasets.push({
 
-      data: stockValues,
+    type: "bar",
 
-      yAxisID: "yLeft",
+    label: "Stock MT",
 
-      backgroundColor:
-        "rgba(17,24,39,0.08)",
+    data: stockValues,
 
-      borderColor:
-        "rgba(17,24,39,0.12)",
+    yAxisID: "yLeft",
 
-      borderWidth: 1,
+    backgroundColor:
+      "rgba(17,24,39,0.08)",
 
-      borderRadius: 2,
+    borderColor:
+      "rgba(17,24,39,0.12)",
 
-      barPercentage: 0.72,
+    borderWidth: 1,
 
-      categoryPercentage: 0.92,
+    borderRadius: 2,
 
-      order: 3
+    barPercentage: 0.72,
+
+    categoryPercentage: 0.92,
+
+    order: 2
+  });
+}
     });
   }
 
