@@ -11,7 +11,7 @@ const SUPABASE_URL =
   "https://pqtbmnqsftqyvkhoszyy.supabase.co";
 
 const SUPABASE_KEY =
-  "YOUR_SUPABASE_KEY";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhc2UiLCJyZWYiOiJwcXRibW5xc2Z0cXl2a2hvc3p5eSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzY1NjYxMjA4LCJleHAiOjIwODEyMzcyMDh9.fS2Wp0lp-GEJXVUpfhcaFRQzxtOY7nhJNjTlpkRxQtA";
 
 /* ==========================================
    PRODUCTS CONFIG
