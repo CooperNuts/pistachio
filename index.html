@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
   <meta charset="UTF-8" />
@@ -21,6 +22,7 @@
     content="Indicative nuts price signals and market trends."
   />
 
+  <!-- FONTS -->
   <link
     rel="preconnect"
     href="https://fonts.googleapis.com"
@@ -40,15 +42,7 @@
   <!-- CHART.JS -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
 
-  <!-- ANNOTATION PLUGIN -->
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1"></script>
-
-  <!-- IMPORTANT: CORRECT PLUGIN REGISTRATION -->
-  <script>
-    Chart.register(window.chartjs_plugin_annotation);
-  </script>
-
-  <!-- STYLES -->
+  <!-- CSS -->
   <link
     rel="stylesheet"
     href="style.css"
@@ -58,185 +52,199 @@
 
 <body>
 
-<!-- ========================================
-     HEADER
-======================================== -->
+  <!-- ========================================
+       HEADER
+  ======================================== -->
 
-<header class="header" role="banner">
+  <header class="header" role="banner">
 
-  <div class="header-content">
+    <div class="header-content">
 
-    <div class="header-text">
+      <div class="header-text">
 
-      <h1>Nuts Price Insights</h1>
+        <h1>Nuts Price Insights</h1>
 
-      <p class="subtitle">
-        From data to decisions
-      </p>
+        <p class="subtitle">
+          From data to decisions
+        </p>
 
-    </div>
-
-    <!-- ========================================
-         PRODUCT SWITCHER
-    ======================================== -->
-
-    <div class="product-switcher">
-
-      <button
-        class="product-switch active"
-        data-product="cashew"
-        type="button"
-      >
-        Cashew
-      </button>
-
-      <button
-        class="product-switch"
-        data-product="pistachio"
-        type="button"
-      >
-        Pistachio
-      </button>
-
-    </div>
-
-  </div>
-
-</header>
-
-<!-- ========================================
-     MAIN
-======================================== -->
-
-<main
-  role="main"
-  class="main-content"
->
-
-  <section
-    class="chart-section"
-    aria-labelledby="productTitle"
-  >
-
-    <div class="card">
+      </div>
 
       <!-- ========================================
-           PRICE + TICKERS
+           PRODUCT SWITCHER
       ======================================== -->
 
-      <div class="price-container">
+      <div class="product-switcher">
 
-        <div class="price-left">
+        <button
+          class="product-switch active"
+          data-product="cashew"
+          type="button"
+        >
+          Cashew
+        </button>
 
-          <h2
-            id="productTitle"
-            class="product-title"
-          ></h2>
+        <button
+          class="product-switch"
+          data-product="pistachio"
+          type="button"
+        >
+          Pistachio
+        </button>
 
-          <div
-            class="price"
-            id="productPrice"
-          ></div>
+      </div>
 
-          <div
-            class="change"
-            id="productChange"
-            role="status"
-            aria-live="polite"
-          ></div>
+    </div>
+
+  </header>
+
+  <!-- ========================================
+       MAIN
+  ======================================== -->
+
+  <main
+    role="main"
+    class="main-content"
+  >
+
+    <section
+      class="chart-section"
+      aria-labelledby="productTitle"
+    >
+
+      <div class="card">
+
+        <!-- ========================================
+             PRICE + TICKERS
+        ======================================== -->
+
+        <div class="price-container">
+
+          <div class="price-left">
+
+            <h2
+              id="productTitle"
+              class="product-title"
+            ></h2>
+
+            <div
+              class="price"
+              id="productPrice"
+            ></div>
+
+            <div
+              class="change"
+              id="productChange"
+              role="status"
+              aria-live="polite"
+            ></div>
+
+          </div>
+
+          <!-- ========================================
+               DYNAMIC TICKERS
+          ======================================== -->
+
+          <div class="top-bar">
+
+            <div
+              class="chart-actions"
+              id="tickerContainer"
+            ></div>
+
+          </div>
 
         </div>
 
         <!-- ========================================
-             DYNAMIC TICKERS
+             CHART
         ======================================== -->
 
-        <div class="top-bar">
+        <div class="chart-wrapper">
 
-          <div
-            class="chart-actions"
-            id="tickerContainer"
-          ></div>
+          <canvas
+            id="currencyChart"
+            role="img"
+            aria-label="Nuts price chart"
+          ></canvas>
 
         </div>
 
       </div>
 
-      <!-- ========================================
-           CHART
-      ======================================== -->
+    </section>
 
-      <div class="chart-wrapper">
+  </main>
 
-        <canvas
-          id="currencyChart"
-          role="img"
-          aria-label="Nuts price chart"
-        ></canvas>
+  <!-- ========================================
+       FOOTER
+  ======================================== -->
 
-      </div>
+  <footer
+    class="footer"
+    role="contentinfo"
+  >
+
+    <div class="footer-left">
+
+      <p>&copy; 2025 · E. Lagarda</p>
 
     </div>
 
-  </section>
+    <div class="footer-right">
 
-</main>
+      <p class="disclaimer">
 
-<!-- ========================================
-     FOOTER
-======================================== -->
+        The prices displayed on this website are provided solely as indicative
+        price signals reflecting general market conditions and are intended
+        for statistical and informational purposes only.
 
-<footer class="footer" role="contentinfo">
+        Under no circumstances shall they be construed as firm, binding,
+        or contractual offers.
 
-  <div class="footer-left">
+        The indicated prices are derived from information gathered from
+        various publicly available and industry-relevant sources.
 
-    <p>&copy; 2025 · E. Lagarda</p>
+        While reasonable efforts are made to ensure accuracy, no representation
+        or warranty is given as to the completeness, reliability, or timeliness
+        of such information.
 
-  </div>
+        These prices do not take into account specific conditions related to
+        product availability, logistics, contractual volumes, quality
+        specifications, or individual payment terms, all of which may have a
+        material impact on actual commercial offers.
 
-  <div class="footer-right">
+        Users should conduct their own market research and consult with
+        industry professionals before making any commercial decisions.
 
-    <p class="disclaimer">
+      </p>
 
-      The prices displayed on this website are provided solely as indicative price signals reflecting general market conditions and are intended for statistical and informational purposes only.
+      <p class="disclaimer">
 
-      Under no circumstances shall they be construed as firm, binding, or contractual offers.
+        Pistachio quality grades have been established according to the
 
-      The indicated prices are derived from information gathered from various publicly available and industry-relevant sources.
+        <a
+          class="footer-inline-link"
+          href="APG-US-Standards-for-Grades-of-Pistachio-Nuts_Brochure_AUG-26-15.zip_.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          APG US Standards for Grades of Pistachio Nuts
+        </a>.
 
-      While reasonable efforts are made to ensure accuracy, no representation or warranty is given as to the completeness, reliability, or timeliness of such information.
+      </p>
 
-      These prices do not take into account specific conditions related to product availability, logistics, contractual volumes, quality specifications, or individual payment terms, all of which may have a material impact on actual commercial offers.
+      <p class="disclaimer">
+        I love nuts, not sure about the vice-versa.
+      </p>
 
-      Users should conduct their own market research and consult with industry professionals before making any commercial decisions.
+    </div>
 
-    </p>
+  </footer>
 
-    <p class="disclaimer">
-
-      Pistachio quality grades have been established according to the
-
-      <a
-        class="footer-inline-link"
-        href="APG-US-Standards-for-Grades-of-Pistachio-Nuts_Brochure_AUG-26-15.zip_.pdf"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        APG US Standards for Grades of Pistachio Nuts
-      </a>.
-
-    </p>
-
-    <p class="disclaimer">
-      I love nuts, not sure about the vice-versa.
-    </p>
-
-  </div>
-
-</footer>
-
-<!-- APP -->
-<script src="app.js"></script>
+  <!-- APP -->
+  <script src="app.js"></script>
 
 </body>
+
 </html>
