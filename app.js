@@ -41,28 +41,28 @@ const PRODUCTS = {
     ]
   },
 
-    /* ========================================
-        PECAN
-     ======================================== */
+  /* ========================================
+     PECAN
+  ======================================== */
 
-     pecan: {
+  pecan: {
 
-       table: "pecan1",
+    table: "pecan1",
 
-       hitos: [],
+    hitos: [],
 
-       tickers: [
+    tickers: [
 
-         {
-           column: "usdlb_usfjmh",
-           name: "US Fancy Jr Mammoth Halves USD/LB",
-           short: "USFJMH",
-           color: "#92400e"
-         }
+      {
+        column: "usdlb_usfjmh",
+        name: "US Fancy Jr Mammoth Halves USD/LB",
+        short: "USFJMH",
+        color: "#92400e"
+      }
 
     ]
-   },
-   
+  },
+
   /* ========================================
      PISTACHIO
   ======================================== */
