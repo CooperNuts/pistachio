@@ -41,6 +41,28 @@ const PRODUCTS = {
     ]
   },
 
+     /* ========================================
+     PECAN
+  ======================================== */
+
+  pecan: {
+
+    table: "pecan1",
+
+    hitos: [],
+
+    tickers: [
+
+      {
+        column: "usdlb_standard",
+        name: "Standard USD/LB",
+        short: "Standard",
+        color: "#92400e"
+      }
+
+    ]
+  },
+   
   /* ========================================
      PISTACHIO
   ======================================== */
