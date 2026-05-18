@@ -41,7 +41,7 @@ const PRODUCTS = {
     ]
   },
 
-     /* ========================================
+   /* ========================================
      PECAN
   ======================================== */
 
@@ -54,14 +54,15 @@ const PRODUCTS = {
     tickers: [
 
       {
-        column: "usdlb_usfjmh,
-        name: "Standard USD/LB",
-        short: "Standard",
+        column: "usdlb_usfjmh",
+        name: "US FJMH USD/LB",
+        short: "USFJMH",
         color: "#92400e"
       }
 
     ]
   },
+
    
   /* ========================================
      PISTACHIO
