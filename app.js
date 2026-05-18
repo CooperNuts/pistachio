@@ -55,7 +55,7 @@ const PRODUCTS = {
 
       {
         column: "usdlb_usfjmh",
-        name: "US Fancy Jr Mammoth Halves USD/LB",
+        name: "US Fancy Junior Mammoth Halves USD/LB CFR Europe",
         short: "USFJMH",
         color: "#92400e"
       }
