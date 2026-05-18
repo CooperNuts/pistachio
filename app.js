@@ -228,16 +228,16 @@ async function fetchData(table) {
     globalData = [];
 
     const response = await fetch(
-  `${SUPABASE_URL}/rest/v1/${table}?select=*`,
-  {
-    method: "GET",
-    headers: {
-      "apikey": SUPABASE_KEY,
-      "Authorization": `Bearer ${SUPABASE_KEY}`,
-      "Content-Type": "application/json",
-      "Prefer": "return=representation"
-    }
-  }
+      `${SUPABASE_URL}/rest/v1/${table}?select=*&order=fecha.desc`,
+      {
+        method: "GET",
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${SUPABASE_KEY}`,
+          "Content-Type": "application/json",
+          "Prefer": "return=representation"
+        }
+      }
     );
 
     const data =
@@ -268,12 +268,6 @@ async function fetchData(table) {
 
       .filter(item =>
         !isNaN(new Date(item.fecha))
-      )
-
-      .sort(
-        (a, b) =>
-          new Date(a.fecha) -
-          new Date(b.fecha)
       );
 
     console.log(
@@ -371,9 +365,7 @@ function updateTickerValues() {
   if (!globalData.length) return;
 
   const latest =
-    globalData[
-      globalData.length - 1
-    ];
+    globalData[0];
 
   document
     .querySelectorAll(".ticker-card")
@@ -479,6 +471,8 @@ function setupChart() {
       scales: {
 
         x: {
+
+          reverse: true,
 
           grid: {
 
@@ -744,14 +738,10 @@ function updateUI() {
   updateChart();
 
   const latest =
-    globalData[
-      globalData.length - 1
-    ];
+    globalData[0];
 
   const previous =
-    globalData[
-      globalData.length - 2
-    ];
+    globalData[1];
 
   const value =
     Number(
@@ -819,4 +809,3 @@ function updateUI() {
   changeEl.className =
     `change ${className}`;
 }
- 
