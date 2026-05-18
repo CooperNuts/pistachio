@@ -54,7 +54,7 @@ const PRODUCTS = {
     tickers: [
 
       {
-        column: "usdlb_standard",
+        column: "usdlb_usfjmh,
         name: "Standard USD/LB",
         short: "Standard",
         color: "#92400e"
