@@ -41,7 +41,7 @@ const PRODUCTS = {
     ]
   },
 
-   /* ========================================
+ /* ========================================
      PECAN
   ======================================== */
 
@@ -55,14 +55,13 @@ const PRODUCTS = {
 
       {
         column: "usdlb_usfjmh",
-        name: "US FJMH USD/LB",
+        name: "US Fancy Jr Mammoth Halves USD/LB",
         short: "USFJMH",
         color: "#92400e"
       }
 
     ]
   },
-
    
   /* ========================================
      PISTACHIO
