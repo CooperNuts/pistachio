@@ -825,3 +825,20 @@ p {
 
   color: #6b7280;
 }
+.product-switcher {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.product-row {
+
+  display: flex;
+
+  gap: 12px;
+
+  flex-wrap: wrap;
+}
