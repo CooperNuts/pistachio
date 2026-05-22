@@ -20,6 +20,28 @@ const SUPABASE_KEY =
 const PRODUCTS = {
 
   /* ========================================
+     BRAZIL NUT
+  ======================================== */
+
+  brazil: {
+
+    table: "brazil1",
+
+    hitos: [],
+
+    tickers: [
+
+      {
+        column: "usdlb_medium",
+        name: "Medium Brazil Nut USD/LB",
+        short: "Medium",
+        color: "#92400e"
+      }
+
+    ]
+  },
+
+  /* ========================================
      CASHEW
   ======================================== */
 
@@ -36,6 +58,50 @@ const PRODUCTS = {
         name: "WW320 Vietnam USD/LB CFR Europe",
         short: "WW320",
         color: "#111827"
+      }
+
+    ]
+  },
+
+  /* ========================================
+     HAZELNUT
+  ======================================== */
+
+  hazelnut: {
+
+    table: "hazelnut1",
+
+    hitos: [],
+
+    tickers: [
+
+      {
+        column: "usdkg_1315",
+        name: "13/15 Hazelnut USD/KG",
+        short: "13/15",
+        color: "#7c3aed"
+      }
+
+    ]
+  },
+
+  /* ========================================
+     MACADAMIA
+  ======================================== */
+
+  macadamia: {
+
+    table: "macadamia1",
+
+    hitos: [],
+
+    tickers: [
+
+      {
+        column: "usdkg_s1",
+        name: "Macadamia S1 USD/KG",
+        short: "S1",
+        color: "#2563eb"
       }
 
     ]
