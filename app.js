@@ -11,7 +11,7 @@ const SUPABASE_URL =
   "https://pqtbmnqsftqyvkhoszyy.supabase.co";
 
 const SUPABASE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxdGJtbnFzZnRxeXZraG9zenl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU2NjEyMDgsImV4cCI6MjA4MTIzNzIwOH0.fS2Wp0lp-GEJXVUpfhcaFRQzxtOY7nhJNjTlpkRxQtA";
+  "TU_SUPABASE_ANON_KEY";
 
 /* ==========================================
    PRODUCTS CONFIG
@@ -351,18 +351,10 @@ async function fetchData(table) {
     }
 
     globalData = data
-
       .filter(item => item.fecha)
-
       .filter(item =>
         !isNaN(new Date(item.fecha))
       );
-
-    console.log(
-      `Loaded ${table}:`,
-      globalData.length,
-      "rows"
-    );
 
   } catch (err) {
 
@@ -671,7 +663,7 @@ function updateChart() {
         : null;
     });
 
-  const values =
+  const movingAverage =
     rawValues.map((_, index) => {
 
       const window =
@@ -686,13 +678,12 @@ function updateChart() {
         return null;
       }
 
-      const avg =
+      return (
         window.reduce(
           (sum, value) => sum + value,
           0
-        ) / window.length;
-
-      return avg;
+        ) / window.length
+      );
     });
 
   const stockValues =
@@ -713,19 +704,6 @@ function updateChart() {
         t =>
           t.column === activeColumn
       );
-
-  const movingAverageColor =
-    currentProduct === "cashew"
-      ? "rgba(17,24,39,0.28)"
-      : activeColumn === "usdlb_large"
-      ? "rgba(37,99,235,0.28)"
-      : activeColumn === "usdlb_kernel"
-      ? "rgba(22,163,74,0.28)"
-      : activeColumn === "eurkg_es2125"
-      ? "rgba(124,58,237,0.28)"
-      : activeColumn === "eurkg_eskernel"
-      ? "rgba(234,88,12,0.28)"
-      : "rgba(17,24,39,0.28)";
 
   chart.data.labels =
     labels;
@@ -755,16 +733,7 @@ function updateChart() {
       backgroundColor:
         "rgba(17,24,39,0.08)",
 
-      borderColor:
-        "rgba(17,24,39,0.12)",
-
-      borderWidth: 1,
-
-      borderRadius: 2,
-
-      barPercentage: 0.72,
-
-      categoryPercentage: 0.92,
+      borderWidth: 0,
 
       order: 3
     });
@@ -792,12 +761,12 @@ function updateChart() {
 
   chart.data.datasets.push({
 
-    label: `${ticker.name} · 3M MA`,
+    label: "3M Moving Average",
 
-    data: values,
+    data: movingAverage,
 
     borderColor:
-      movingAverageColor,
+      "rgba(17,24,39,0.28)",
 
     borderWidth: 2,
 
@@ -811,6 +780,69 @@ function updateChart() {
 
     order: 2
   });
+
+  /* ========================================
+     HITOS
+  ======================================== */
+
+  const annotations = {};
+
+  if (PRODUCTS[currentProduct].hitos?.length) {
+
+    PRODUCTS[currentProduct].hitos.forEach(hito => {
+
+      const index = labels.findIndex(
+        label => label === hito.fecha
+      );
+
+      if (index !== -1) {
+
+        annotations[`line_${hito.fecha}`] = {
+
+          type: "line",
+
+          xMin: index,
+
+          xMax: index,
+
+          borderColor:
+            "rgba(239,68,68,0.18)",
+
+          borderWidth: 1.2,
+
+          drawTime:
+            "beforeDatasetsDraw",
+
+          label: {
+
+            display: true,
+
+            content: hito.texto,
+
+            position: "start",
+
+            backgroundColor:
+              "rgba(239,68,68,0)",
+
+            color: "#ef4444",
+
+            font: {
+
+              size: 11,
+
+              weight: "600"
+            },
+
+            yAdjust: -12
+          }
+        };
+      }
+    });
+  }
+
+  chart.options.plugins.annotation = {
+    annotations
+  };
 
   chart.update();
 }
