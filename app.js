@@ -65,7 +65,7 @@ const PRODUCTS = {
 
       {
         column: "usdkg_1315",
-        name: "13/15 Hazelnut USD/KG",
+        name: "Hazelnut Raw 13/15 mm. USD/KG CFR Europe",
         short: "13/15",
         color: "#7c3aed"
       }
@@ -83,7 +83,7 @@ const PRODUCTS = {
 
       {
         column: "usdkg_s1",
-        name: "Macadamia S1 USD/KG",
+        name: "Macadamia S1 16-20 mm. 90% wholes USD/KG CFR Europe",
         short: "S1",
         color: "#2563eb"
       }
