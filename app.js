@@ -540,7 +540,11 @@ function setupChart() {
 
             autoSkip: true,
 
-            maxTicksLimit: 4
+            maxTicksLimit: 10,
+
+            maxRotation: 0,
+
+            minRotation: 0
           }
         },
 
@@ -791,7 +795,7 @@ function updateChart() {
           borderColor:
             "rgba(239,68,68,0.14)",
 
-          borderWidth: 1.2,
+          borderWidth: 1.4,
 
           drawTime:
             "beforeDatasetsDraw",
@@ -800,8 +804,11 @@ function updateChart() {
 
             display: true,
 
-            content:
-              `${hito.texto} · ${formattedPrice}`,
+            content:   [
+               hito.texto,
+               hito.fecha,
+               formattedPrice
+            ],
 
             position: "start",
 
