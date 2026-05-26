@@ -171,19 +171,19 @@ p {
 
   border-radius: 999px;
 
-  border: 1px solid rgba(0,0,0,0.06);
+  border: 1px solid rgba(255,255,255,0.22);
 
-  background: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.32);
 
-   backdrop-filter: blur(10px);
+   backdrop-filter: blur(16px);
 
-  -webkit-backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(16px);
    
-  color: var(--text);
+  color: #111827;
 
   font-family: inherit;
 
-  font-size: 16px;
+  font-size: 14px;
 
   font-weight: 700;
 
@@ -196,10 +196,8 @@ p {
     background var(--transition);
 
   box-shadow:
-    var(--shadow-sm),
-    0 4px 14px rgba(0,0,0,0.03);
+    0 8px 24px rgba(0,0,0,0.04);
 
-  backdrop-filter: blur(10px);
 }
 
 .product-switch:hover {
@@ -212,11 +210,14 @@ p {
 
 .product-switch.active {
 
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.55);
 
-  color: white;
+  color: #111827;
 
-  border-color: rgba(17,24,39,0.12);
+  border-color: rgba(255,255,255,0.34);
+
+   box-shadow:
+    0 10px 30px rgba(0,0,0,0.06);
 }
 
 /* ========================================
