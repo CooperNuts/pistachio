@@ -538,9 +538,14 @@ function setupChart() {
 
             color: "#9ca3af",
 
-            autoSkip: true,
+            autoSkip: false,
 
-            maxTicksLimit: 10,
+             callback: function(value, index) {
+
+               return index % 30 === 0
+                 ? this.getLabelForValue(value)
+                 : "";
+            },
 
             maxRotation: 0,
 
