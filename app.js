@@ -796,8 +796,17 @@ function updateChart() {
       );
 
       if (index !== -1) {
+        
+         const price =
+           rawValues[index];
 
-        annotations[`line_${hito.fecha}`] = {
+         const formattedPrice =
+           price !== null &&
+           price !== undefined
+             ? price.toFixed(2)
+             : "--";
+         
+         annotations[`line_${hito.fecha}`] = {
 
           type: "line",
 
