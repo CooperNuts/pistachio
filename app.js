@@ -568,7 +568,6 @@ function setupChart() {
 
             color: "#9ca3af"
 
-            maxTicksLimit: 12
           }
         },
 
