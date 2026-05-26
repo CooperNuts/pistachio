@@ -831,6 +831,7 @@ function updateChart() {
             display: true,
 
             content: hito.texto,
+            formattedPrice
 
             position: "start",
 
