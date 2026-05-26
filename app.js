@@ -31,7 +31,7 @@ const PRODUCTS = {
         column: "usdlb_medium",
         name: "Medium Brazil Nut USD/LB",
         short: "Medium",
-        color: "#92400e"
+        color: "#6b4f3a"
       }
 
     ]
@@ -49,7 +49,7 @@ const PRODUCTS = {
         column: "usdlb_ww320",
         name: "WW320 Vietnam USD/LB CFR Europe",
         short: "WW320",
-        color: "#111827"
+        color: "#374151"
       }
 
     ]
@@ -67,7 +67,7 @@ const PRODUCTS = {
         column: "usdkg_1315",
         name: "Hazelnut Raw 13/15 mm. USD/KG CFR Europe",
         short: "13/15",
-        color: "#7c3aed"
+        color: "#5b4b73"
       }
 
     ]
@@ -85,7 +85,7 @@ const PRODUCTS = {
         column: "usdkg_s1",
         name: "Macadamia S1 16-20 mm. 90% wholes USD/KG CFR Europe",
         short: "S1",
-        color: "#2563eb"
+        color: "#486581"
       }
 
     ]
@@ -103,7 +103,7 @@ const PRODUCTS = {
         column: "usdlb_usfjmh",
         name: "US Fancy Junior Mammoth Halves USD/LB CFR Europe",
         short: "USFJMH",
-        color: "#92400e"
+        color: "#70523a"
       }
 
     ]
@@ -134,28 +134,28 @@ const PRODUCTS = {
         column: "usdlb_large",
         name: "Large Size USX1 USDLB FAS Calif.",
         short: "Large Size",
-        color: "#2563eb"
+        color: "#4f6272"
       },
 
       {
         column: "usdlb_kernel",
         name: "Kernel W80 USX1 USDLB FAS Calif.",
         short: "Kernel W80",
-        color: "#16a34a"
+        color: "#4b6a58"
       },
 
       {
         column: "eurkg_es2125",
         name: "ES 21/25 EURKG EXW Toledo",
         short: "ES 21/25",
-        color: "#7c3aed"
+        color: "#665a7a"
       },
 
       {
         column: "eurkg_eskernel",
         name: "ES Kernel EURKG EXW Toledo",
         short: "ES Kernel",
-        color: "#ea580c"
+        color: "#8a6246"
       }
 
     ]
