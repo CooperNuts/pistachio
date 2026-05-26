@@ -11,17 +11,13 @@ const SUPABASE_URL =
   "https://pqtbmnqsftqyvkhoszyy.supabase.co";
 
 const SUPABASE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxdGJtbnFzZnRxeXZraG9zenl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU2NjEyMDgsImV4cCI6MjA4MTIzNzIwOH0.fS2Wp0lp-GEJXVUpfhcaFRQzxtOY7nhJNjTlpkRxQtA";
+  "TU_SUPABASE_KEY";
 
 /* ==========================================
    PRODUCTS CONFIG
 ========================================== */
 
 const PRODUCTS = {
-
-  /* ========================================
-     BRAZIL NUT
-  ======================================== */
 
   brazil: {
 
@@ -41,10 +37,6 @@ const PRODUCTS = {
     ]
   },
 
-  /* ========================================
-     CASHEW
-  ======================================== */
-
   cashew: {
 
     table: "cashew1",
@@ -62,10 +54,6 @@ const PRODUCTS = {
 
     ]
   },
-
-  /* ========================================
-     HAZELNUT
-  ======================================== */
 
   hazelnut: {
 
@@ -85,10 +73,6 @@ const PRODUCTS = {
     ]
   },
 
-  /* ========================================
-     MACADAMIA
-  ======================================== */
-
   macadamia: {
 
     table: "macadamia1",
@@ -107,10 +91,6 @@ const PRODUCTS = {
     ]
   },
 
-  /* ========================================
-     PECAN
-  ======================================== */
-
   pecan: {
 
     table: "pecan1",
@@ -128,10 +108,6 @@ const PRODUCTS = {
 
     ]
   },
-
-  /* ========================================
-     PISTACHIO
-  ======================================== */
 
   pistachio: {
 
@@ -449,7 +425,6 @@ function updateTickerValues() {
 
   document
     .querySelectorAll(".ticker-card")
-
     .forEach(card => {
 
       const value =
@@ -464,15 +439,10 @@ function updateTickerValues() {
           ".ticker-value"
         );
 
-      if (!isNaN(value)) {
-
-        valueEl.textContent =
-          value.toFixed(2);
-
-      } else {
-
-        valueEl.textContent = "--";
-      }
+      valueEl.textContent =
+        !isNaN(value)
+          ? value.toFixed(2)
+          : "--";
     });
 }
 
@@ -566,8 +536,11 @@ function setupChart() {
 
           ticks: {
 
-            color: "#9ca3af"
+            color: "#9ca3af",
 
+            autoSkip: true,
+
+            maxTicksLimit: 8
           }
         },
 
@@ -592,9 +565,9 @@ function setupChart() {
 
             color: "#6b7280",
 
-             stepSize: 0.05,
-             
-             callback: value =>
+            stepSize: 0.05,
+
+            callback: value =>
               Number(value).toFixed(2)
           }
         },
@@ -639,13 +612,22 @@ function updateChart() {
     return;
   }
 
+  /* ========================================
+     DOWNSAMPLING
+  ======================================== */
+
+  const sampledData =
+    globalData.filter((_, index) =>
+      index % 25 === 0
+    );
+
   const labels =
-    globalData.map(
+    sampledData.map(
       d => d.fecha
     );
 
   const rawValues =
-    globalData.map(d => {
+    sampledData.map(d => {
 
       const raw =
         d[activeColumn];
@@ -672,7 +654,7 @@ function updateChart() {
       const window =
         rawValues
           .slice(
-            Math.max(0, index - 89),
+            Math.max(0, index - 12),
             index + 1
           )
           .filter(v => v !== null);
@@ -690,7 +672,7 @@ function updateChart() {
     });
 
   const stockValues =
-    globalData.map(d => {
+    sampledData.map(d => {
 
       const value =
         Number(d.stock_MT);
@@ -734,7 +716,7 @@ function updateChart() {
       yAxisID: "yLeft",
 
       backgroundColor:
-        "rgba(17,24,39,0.08)",
+        "rgba(17,24,39,0.06)",
 
       borderWidth: 0,
 
@@ -751,11 +733,11 @@ function updateChart() {
     borderColor:
       ticker.color,
 
-    borderWidth: 2.2,
+    borderWidth: 2.4,
 
     pointRadius: 0,
 
-    tension: 0.25,
+    tension: 0.28,
 
     fill: false,
 
@@ -764,18 +746,18 @@ function updateChart() {
 
   chart.data.datasets.push({
 
-    label: "3M Moving Average",
+    label: "Moving Average",
 
     data: movingAverage,
 
     borderColor:
-      "rgba(17,24,39,0.28)",
+      "rgba(17,24,39,0.24)",
 
     borderWidth: 2,
 
     pointRadius: 0,
 
-    tension: 0.32,
+    tension: 0.35,
 
     fill: false,
 
@@ -783,10 +765,6 @@ function updateChart() {
 
     order: 2
   });
-
-  /* ========================================
-     HITOS
-  ======================================== */
 
   const annotations = {};
 
@@ -799,17 +777,8 @@ function updateChart() {
       );
 
       if (index !== -1) {
-        
-         const price =
-           rawValues[index];
 
-         const formattedPrice =
-           price !== null &&
-           price !== undefined
-             ? price.toFixed(2)
-             : "--";
-         
-         annotations[`line_${hito.fecha}`] = {
+        annotations[`line_${hito.fecha}`] = {
 
           type: "line",
 
@@ -818,7 +787,7 @@ function updateChart() {
           xMax: index,
 
           borderColor:
-            "rgba(239,68,68,0.18)",
+            "rgba(239,68,68,0.14)",
 
           borderWidth: 1.2,
 
@@ -830,7 +799,6 @@ function updateChart() {
             display: true,
 
             content: hito.texto,
-            formattedPrice,
 
             position: "start",
 
@@ -926,14 +894,14 @@ function updateUI() {
 
     symbol = "▲";
 
-    className = "down";
+    className = "up";
   }
 
   else if (change < 0) {
 
     symbol = "▼";
 
-    className = "up";
+    className = "down";
   }
 
   changeEl.textContent =
