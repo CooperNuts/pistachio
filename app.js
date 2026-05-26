@@ -547,9 +547,9 @@ function setupChart() {
                  : "";
             },
 
-            maxRotation: 0,
+            maxRotation: 90,
 
-            minRotation: 0
+            minRotation: 90
           }
         },
 
