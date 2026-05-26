@@ -11,7 +11,7 @@ const SUPABASE_URL =
   "https://pqtbmnqsftqyvkhoszyy.supabase.co";
 
 const SUPABASE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxdGJtbnFzZnRxeXZraG9zenl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU2NjEyMDgsImV4cCI6MjA4MTIzNzIwOH0.fS2Wp0lp-GEJXVUpfhcaFRQzxtOY7nhJNjTlpkRxQtA";
+  "TU_SUPABASE_KEY";
 
 /* ==========================================
    PRODUCTS CONFIG
@@ -540,7 +540,7 @@ function setupChart() {
 
             autoSkip: true,
 
-            maxTicksLimit: 8
+            maxTicksLimit: 4
           }
         },
 
@@ -614,22 +614,13 @@ function updateChart() {
     return;
   }
 
-  /* ========================================
-     DOWNSAMPLING
-  ======================================== */
-
-  const sampledData =
-    globalData.filter((_, index) =>
-      index % 25 === 0
-    );
-
   const labels =
-    sampledData.map(
+    globalData.map(
       d => d.fecha
     );
 
   const rawValues =
-    sampledData.map(d => {
+    globalData.map(d => {
 
       const raw =
         d[activeColumn];
@@ -656,7 +647,7 @@ function updateChart() {
       const window =
         rawValues
           .slice(
-            Math.max(0, index - 12),
+            Math.max(0, index - 89),
             index + 1
           )
           .filter(v => v !== null);
@@ -674,7 +665,7 @@ function updateChart() {
     });
 
   const stockValues =
-    sampledData.map(d => {
+    globalData.map(d => {
 
       const value =
         Number(d.stock_MT);
@@ -759,7 +750,7 @@ function updateChart() {
 
     pointRadius: 0,
 
-    tension: 0.35,
+    tension: 0,
 
     fill: false,
 
@@ -779,6 +770,15 @@ function updateChart() {
       );
 
       if (index !== -1) {
+
+        const price =
+          rawValues[index];
+
+        const formattedPrice =
+          price !== null &&
+          price !== undefined
+            ? price.toFixed(2)
+            : "--";
 
         annotations[`line_${hito.fecha}`] = {
 
@@ -800,7 +800,8 @@ function updateChart() {
 
             display: true,
 
-            content: hito.texto,
+            content:
+              `${hito.texto} · ${formattedPrice}`,
 
             position: "start",
 
@@ -823,9 +824,12 @@ function updateChart() {
     });
   }
 
-  chart.options.plugins.annotation = {
-    annotations
-  };
+  if (chart.options.plugins) {
+
+    chart.options.plugins.annotation = {
+      annotations
+    };
+  }
 
   chart.update();
 }
