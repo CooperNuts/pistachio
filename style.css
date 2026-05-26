@@ -173,8 +173,12 @@ p {
 
   border: 1px solid rgba(0,0,0,0.06);
 
-  background: rgba(255,255,255,0.92);
+  background: rgba(255,255,255,0.5);
 
+   backdrop-filter: blur(10px);
+
+  -webkit-backdrop-filter: blur(10px);
+   
   color: var(--text);
 
   font-family: inherit;
@@ -208,7 +212,7 @@ p {
 
 .product-switch.active {
 
-  background: #111827;
+  background: rgba(255, 255, 255, 0.82);
 
   color: white;
 
