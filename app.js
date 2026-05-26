@@ -591,7 +591,9 @@ function setupChart() {
 
             color: "#6b7280",
 
-            callback: value =>
+             stepSize: 0.05,
+             
+             callback: value =>
               Number(value).toFixed(2)
           }
         },
