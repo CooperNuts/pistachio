@@ -576,6 +576,8 @@ function setupChart() {
 
           position: "left",
 
+          max: 1000000,
+
           display: true,
 
           grid: {
@@ -737,7 +739,7 @@ function updateChart() {
 
     pointRadius: 0,
 
-    tension: 0.28,
+    tension: 0,
 
     fill: false,
 
