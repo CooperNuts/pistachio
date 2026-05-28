@@ -510,7 +510,7 @@ function setupChart() {
           borderColor:
             "rgba(0,0,0,0.06)",
 
-          borderWidth: 1,
+          borderWidth: 0.8,
 
           padding: 14,
 
