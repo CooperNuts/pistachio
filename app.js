@@ -28,7 +28,7 @@ const PRODUCTS = {
     tickers: [
 
       {
-        column: "usdlb_medium",
+        column: "usdlb_med",
         name: "Bolivia Brazil Nut Medium USD/LB CFR Europe",
         short: "Medium",
         color: "#6b4f3a"
