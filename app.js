@@ -29,7 +29,7 @@ const PRODUCTS = {
 
       {
         column: "usdlb_medium",
-        name: "Medium Brazil Nut USD/LB",
+        name: "Bolivia Brazil Nut Medium USD/LB CFR Europe",
         short: "Medium",
         color: "#6b4f3a"
       }
@@ -47,7 +47,7 @@ const PRODUCTS = {
 
       {
         column: "usdlb_ww320",
-        name: "WW320 Vietnam USD/LB CFR Europe",
+        name: "Vietnam WW320 USD/LB CFR Europe",
         short: "WW320",
         color: "#374151"
       }
@@ -65,7 +65,7 @@ const PRODUCTS = {
 
       {
         column: "usdkg_1315",
-        name: "Hazelnut Raw 13/15 mm. USD/KG CFR Europe",
+        name: "Turkey Hazelnut Levant Raw 13/15 mm. USD/KG CFR Europe",
         short: "13/15",
         color: "#5b4b73"
       }
@@ -83,7 +83,7 @@ const PRODUCTS = {
 
       {
         column: "usdkg_s1",
-        name: "Macadamia S1 16-20 mm. 90% wholes USD/KG CFR Europe",
+        name: "South Africa Macadamia S1 16-20 90% USD/KG CFR Europe",
         short: "S1",
         color: "#486581"
       }
@@ -125,21 +125,21 @@ const PRODUCTS = {
 
       {
         column: "usdlb_std",
-        name: "Std. Size USX1 USDLB FAS Calif.",
+        name: "US Std. Size USX1 USDLB FAS Calif.",
         short: "Std. Size",
         color: "#111827"
       },
 
       {
         column: "usdlb_large",
-        name: "Large Size USX1 USDLB FAS Calif.",
+        name: "US Large Size USX1 USDLB FAS Calif.",
         short: "Large Size",
         color: "#4f6272"
       },
 
       {
         column: "usdlb_kernel",
-        name: "Kernel W80 USX1 USDLB FAS Calif.",
+        name: "US Kernel W80 USX1 USDLB FAS Calif.",
         short: "Kernel W80",
         color: "#4b6a58"
       },
