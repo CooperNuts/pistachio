@@ -1,251 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-  <meta charset="UTF-8" />
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  />
-
-  <meta
-    name="theme-color"
-    content="#ffffff"
-  />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
   <title>Nuts Price Insights</title>
+  <meta name="description" content="Indicative nuts price signals and market trends.">
 
-  <meta
-    name="description"
-    content="Indicative nuts price signals and market trends."
-  />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- FONTS -->
-  <link
-    rel="preconnect"
-    href="https://fonts.googleapis.com"
-  />
-
-  <link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin
-  />
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
-  />
-
-  <!-- CHART.JS -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
-
-  <!-- ANNOTATIONS (HITOS) -->
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1"></script>
-
   <script>
     Chart.register(annotationPlugin);
   </script>
 
-  <!-- CSS -->
-  <link
-    rel="stylesheet"
-    href="style.css"
-  />
-
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
-  <!-- ========================================
-       HEADER
-  ======================================== -->
-
   <header class="header" role="banner">
-
     <div class="header-content">
-
       <div class="header-text">
-
         <h1>Nuts Price Insights</h1>
-
-        <p class="subtitle">
-          From data to decisions
-        </p>
-
+        <p class="subtitle">From data to decisions</p>
       </div>
 
-      <!-- ========================================
-           PRODUCT SWITCHER
-      ======================================== -->
-
-      <div class="product-switcher">
-
-        <!-- ROW 1 -->
-
-        <div class="product-row">
-
-          <button
-            class="product-switch"
-            data-product="brazil"
-            type="button"
-          >
-            Brazil Nut
-          </button>
-
-          <button
-            class="product-switch active"
-            data-product="cashew"
-            type="button"
-          >
-            Cashew
-          </button>
-
-          <button
-            class="product-switch"
-            data-product="hazelnut"
-            type="button"
-          >
-            Hazelnut
-          </button>
-
-        </div>
-
-        <!-- ROW 2 -->
-
-        <div class="product-row">
-
-          <button
-            class="product-switch"
-            data-product="macadamia"
-            type="button"
-          >
-            Macadamia
-          </button>
-
-          <button
-            class="product-switch"
-            data-product="pecan"
-            type="button"
-          >
-            Pecan
-          </button>
-
-          <button
-            class="product-switch"
-            data-product="pistachio"
-            type="button"
-          >
-            Pistachio
-          </button>
-
-        </div>
-
-      </div>
-
+      <div class="next-update-top" id="topUpdate"></div>
     </div>
-
   </header>
 
-  <!-- ========================================
-       MAIN
-  ======================================== -->
-
-  <main
-    role="main"
-    class="main-content"
-  >
-
-    <section
-      class="chart-section"
-      aria-labelledby="productTitle"
-    >
-
-      <div class="card">
-
-        <!-- ========================================
-             PRICE + TICKERS
-        ======================================== -->
-
+  <main role="main" class="main-content">
+    <section class="chart-section" aria-labelledby="productTitle">
+      <div class="card chart-card">
         <div class="price-container">
-
           <div class="price-left">
-
-            <h2
-              id="productTitle"
-              class="product-title"
-            ></h2>
-
-            <div
-              class="price"
-              id="productPrice"
-            ></div>
-
-            <div
-              class="change"
-              id="productChange"
-              role="status"
-              aria-live="polite"
-            ></div>
-
+            <h2 id="productTitle" class="product-title">Loading...</h2>
+            <div class="price" id="productPrice">--</div>
+            <div class="change neutral" id="productChange" role="status" aria-live="polite">--</div>
           </div>
-
-          <!-- ========================================
-               DYNAMIC TICKERS
-          ======================================== -->
-
-          <div class="top-bar">
-
-            <div
-              class="chart-actions"
-              id="tickerContainer"
-            ></div>
-
-          </div>
-
         </div>
-
-        <!-- ========================================
-             CHART
-        ======================================== -->
 
         <div class="chart-wrapper">
-
-          <canvas
-            id="currencyChart"
-            role="img"
-            aria-label="Nuts price chart"
-          ></canvas>
-
+          <canvas id="currencyChart" role="img" aria-label="Nuts price chart"></canvas>
         </div>
-
       </div>
-
     </section>
 
+    <section class="market-workspace" aria-label="Market prices">
+      <div class="category-list" aria-label="Categories">
+        <div class="panel-head">
+          <span>Category</span>
+          <span>Price</span>
+        </div>
+        <div id="categoryList"></div>
+      </div>
+
+      <aside class="detail-panel" aria-label="Category detail">
+        <div class="panel-head">
+          <span>Detail</span>
+          <span id="detailCategory">--</span>
+        </div>
+
+        <div class="detail-summary">
+          <div class="summary-item">
+            <span>Price</span>
+            <strong id="detailPrice">--</strong>
+          </div>
+          <div class="summary-item">
+            <span>1 day</span>
+            <strong id="detailDay">--</strong>
+          </div>
+          <div class="summary-item">
+            <span>3 months</span>
+            <strong id="detailThreeMonths">--</strong>
+          </div>
+        </div>
+
+        <table class="product-table">
+          <colgroup>
+            <col class="product-col">
+            <col class="price-col">
+            <col class="change-col">
+            <col class="change-col">
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col">Product</th>
+              <th scope="col">Price</th>
+              <th scope="col">1 day</th>
+              <th scope="col">3 months</th>
+            </tr>
+          </thead>
+          <tbody id="productRows"></tbody>
+        </table>
+
+        <div class="meta-row">
+          <span id="nextUpdateBottom"></span>
+        </div>
+      </aside>
+    </section>
   </main>
 
-  <!-- ========================================
-       FOOTER
-  ======================================== -->
-
-  <footer
-    class="footer"
-    role="contentinfo"
-  >
-
+  <footer class="footer" role="contentinfo">
     <div class="footer-left">
-
       <p>&copy; 2025 · E. Lagarda</p>
-
     </div>
 
     <div class="footer-right">
-
       <p class="disclaimer">
-
         The prices displayed on this website are provided solely as indicative
         price signals reflecting general market conditions and are intended
         for statistical and informational purposes only.
@@ -267,13 +131,10 @@
 
         Users should conduct their own market research and consult with
         industry professionals before making any commercial decisions.
-
       </p>
 
       <p class="disclaimer">
-
         Pistachio quality grades have been established according to the
-
         <a
           class="footer-inline-link"
           href="APG-US-Standards-for-Grades-of-Pistachio-Nuts_Brochure_AUG-26-15.zip_.pdf"
@@ -282,20 +143,14 @@
         >
           APG US Standards for Grades of Pistachio Nuts
         </a>.
-
       </p>
 
       <p class="disclaimer">
         I love nuts, not sure about the vice-versa.
       </p>
-
     </div>
-
   </footer>
 
-  <!-- APP -->
   <script src="app.js"></script>
-
 </body>
-
 </html>
