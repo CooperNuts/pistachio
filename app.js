@@ -411,6 +411,10 @@ function updateChart(product, ticker) {
 
 function buildAnnotations(product, labels, rawValues) {
   const annotations = {};
+  const validValues = rawValues.filter((value) => value !== null);
+  const maxValue = Math.max(...validValues);
+  const minValue = Math.min(...validValues);
+  const labelY = maxValue + (maxValue - minValue || 1) * 0.08;
 
   product.hitos?.forEach((hito) => {
     const index = labels.findIndex((label) => label === hito.fecha);
@@ -425,23 +429,27 @@ function buildAnnotations(product, labels, rawValues) {
       xMax: index,
       borderColor: "rgba(239,68,68,0.14)",
       borderWidth: 1.4,
-      drawTime: "beforeDatasetsDraw",
-      label: {
-        display: true,
-        content: [
-          hito.texto,
-          hito.fecha,
-          price !== null && price !== undefined ? price.toFixed(2) : "--"
-        ],
-        position: "start",
-        backgroundColor: "rgba(239,68,68,0)",
-        color: "#ef4444",
-        font: {
-          size: 11,
-          weight: "600"
-        },
-        yAdjust: -12
-      }
+      drawTime: "beforeDatasetsDraw"
+    };
+
+    annotations[`label_${hito.fecha}`] = {
+      type: "label",
+      xValue: index,
+      yValue: labelY,
+      content: [
+        hito.texto,
+        hito.fecha,
+        price !== null && price !== undefined ? price.toFixed(2) : "--"
+      ],
+      backgroundColor: "rgba(239,68,68,0)",
+      color: "#ef4444",
+      font: {
+        size: 11,
+        weight: "600"
+      },
+      textAlign: "left",
+      xAdjust: 6,
+      yAdjust: 8
     };
   });
 
@@ -523,15 +531,24 @@ function formatAxisDate(dateString) {
 }
 
 function setNextUpdate() {
-  const label =
-    new Intl.DateTimeFormat("en-US", {
-      timeZone: "Europe/Madrid",
-      month: "long",
-      day: "numeric",
-      year: "numeric"
-    }).format(new Date()) + " · 23:59 Spanish time";
+  const now = new Date();
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
 
-  document.getElementById("topUpdate").textContent = label;
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Europe/Madrid",
+    month: "long",
+    day: "numeric",
+    year: "numeric"
+  });
+
+  const label =
+    formatter.format(now) + " · 23:59 Spanish time";
+  const lastUpdateLabel =
+    formatter.format(yesterday) + " · 23:59 Spanish time";
+
+  document.getElementById("topUpdate").textContent =
+    `Last update: ${lastUpdateLabel}`;
   document.getElementById("nextUpdateBottom").textContent =
     `Next update: ${label}`;
 }
