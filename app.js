@@ -235,7 +235,7 @@ function renderCategories() {
             <span class="swatch" style="background:${swatchBackground(ticker.color)}"></span>
             <span>
               <strong>${product.title}</strong>
-              <span>${cleanName(ticker.name)}</span>
+              <span>${ticker.name}</span>
             </span>
           </span>
           <span class="category-value">
@@ -283,7 +283,7 @@ function renderDetail(product, selectedTicker) {
 
       return `
         <tr class="${active}" data-column="${ticker.column}">
-          <td><span class="variant-product">${cleanName(ticker.name)}</span></td>
+          <td><span class="variant-product">${ticker.name}</span></td>
           <td class="price-cell">${stats.price}</td>
           <td><span class="chip ${chipClass(stats.day)}">${formatPercent(stats.day)}</span></td>
           <td class="price-cell">${formatPercent(stats.threeMonths)}</td>
@@ -315,7 +315,7 @@ function renderSelectedTicker(product, ticker) {
   const stats = statsFor(product, ticker);
 
   document.getElementById("productTitle").textContent =
-    `${product.title} · ${cleanName(ticker.name)}`;
+    `${product.title} · ${ticker.name}`;
 
   document.getElementById("productPrice").textContent =
     formatNumber(stats.value);
@@ -377,7 +377,7 @@ function updateChart(product, ticker) {
   }
 
   chart.data.datasets.push({
-    label: ticker.short || cleanName(ticker.name),
+    label: ticker.short || ticker.name,
     data: rawValues,
     borderColor: ticker.color,
     borderWidth: 2.4,
