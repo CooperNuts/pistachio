@@ -318,10 +318,10 @@ function renderSelectedTicker(product, ticker) {
     `${product.title} · ${ticker.name}`;
 
   document.getElementById("productPrice").textContent =
-    formatNumber(stats.value);
+    stats.price;
 
   const changeEl = document.getElementById("productChange");
-  changeEl.textContent = `${formatPercent(stats.day)} 1 day`;
+  changeEl.textContent = `${formatTopChange(stats.day)} 1 day`;
   changeEl.className = `change ${chipClass(stats.day)}`;
 
   document.getElementById("detailPrice").textContent = stats.price;
@@ -506,6 +506,22 @@ function formatPercent(value) {
   const sign = rounded > 0 ? "+" : "";
 
   return `${sign}${rounded.toFixed(1)}%`;
+}
+
+function formatTopChange(value) {
+  if (!Number.isFinite(value)) return "--";
+
+  const rounded = Math.abs(value) < 0.05 ? 0 : value;
+
+  if (rounded > 0) {
+    return `▲ ${formatPercent(rounded)}`;
+  }
+
+  if (rounded < 0) {
+    return `▼ ${formatPercent(rounded)}`;
+  }
+
+  return formatPercent(rounded);
 }
 
 function chipClass(value) {
