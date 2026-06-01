@@ -143,19 +143,23 @@ p {
 .price-left {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title price"
+    "title change";
   width: 100%;
   align-items: center;
-  gap: 20px;
+  column-gap: 20px;
+  row-gap: 6px;
 }
 
 .product-title {
+  grid-area: title;
   color: var(--text);
-  margin-bottom: 4px;
+  margin-bottom: 0;
 }
 
 .price {
-  grid-column: 2;
-  grid-row: 1 / span 2;
+  grid-area: price;
   font-size: 36px;
   line-height: 1;
   font-weight: 800;
@@ -166,17 +170,19 @@ p {
 }
 
 .change {
+  grid-area: change;
   color: var(--muted);
   font-size: 13px;
   font-weight: 800;
+  text-align: right;
 }
 
 .change.up {
-  color: var(--green);
+  color: #8f2f2b;
 }
 
 .change.down {
-  color: var(--red);
+  color: #0f6844;
 }
 
 .change.neutral {
@@ -414,13 +420,13 @@ tbody tr:last-child td {
 }
 
 .chip.up {
-  color: var(--green);
-  background: var(--green-soft);
+  color: #8f2f2b;
+  background: var(--red-soft);
 }
 
 .chip.down {
-  color: var(--red);
-  background: var(--red-soft);
+  color: #0f6844;
+  background: var(--green-soft);
 }
 
 .chip.neutral {
@@ -526,13 +532,19 @@ tbody tr:last-child td {
 
   .price-left {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "title"
+      "price"
+      "change";
   }
 
   .price {
-    grid-column: auto;
-    grid-row: auto;
     text-align: left;
     font-size: 34px;
+  }
+
+  .change {
+    text-align: left;
   }
 
   .chart-wrapper {
