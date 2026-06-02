@@ -110,8 +110,13 @@ async function loadAllPriceTables() {
 
 async function fetchPriceTable(tableName) {
   const response = await fetch(
-    `${SUPABASE_URL}/rest/v1/${tableName}?select=*&order=fecha.desc`,
-    { headers: headers() }
+    `${SUPABASE_URL}/rest/v1/${tableName}?select=*&fecha=gte.2023-07-01&order=fecha.desc`,
+    {
+      headers: {
+        ...headers(),
+        Range: "0-5000"
+      }
+    }
   );
 
   const rows = await response.json();
