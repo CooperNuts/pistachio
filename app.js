@@ -385,7 +385,7 @@ function updateChart(product, ticker) {
     label: ticker.short || ticker.name,
     data: rawValues,
     borderColor: ticker.color,
-    borderWidth: 2.4,
+    borderWidth: 2.0,
     pointRadius: 0,
     pointHoverRadius: 4,
     pointHitRadius: 12,
