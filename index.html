@@ -13,6 +13,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     Chart.register(annotationPlugin);
   </script>
@@ -20,136 +21,147 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="header" role="banner">
-    <div class="header-content">
-      <div class="header-text">
-        <h1>Nuts Price Insights</h1>
-        <p class="subtitle">From data to decisions</p>
+  <main class="auth-screen" id="authScreen" aria-labelledby="authTitle">
+    <section class="auth-card">
+      <div class="auth-brand">
+        <span class="auth-mark">A</span>
+        <span>Allnuts</span>
       </div>
 
-      <div class="next-update-top" id="topUpdate"></div>
-    </div>
-  </header>
+      <h1 id="authTitle">Access Nuts Price Insights</h1>
+      <p>Enter your email and confirm the numeric code we send you. Access is free.</p>
 
-  <main role="main" class="main-content">
-    <section class="chart-section" aria-labelledby="productTitle">
-      <div class="card chart-card">
-        <div class="price-container">
-          <div class="price-left">
-            <h2 id="productTitle" class="product-title">Loading...</h2>
-            <div class="price" id="productPrice">--</div>
-            <div class="change neutral" id="productChange" role="status" aria-live="polite">--</div>
-          </div>
+      <form class="auth-form" id="emailForm">
+        <label for="email">Email</label>
+        <div class="auth-row">
+          <input id="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+          <button type="submit">Send code</button>
         </div>
+      </form>
 
-        <div class="chart-wrapper">
-          <canvas id="currencyChart" role="img" aria-label="Nuts price chart"></canvas>
+      <form class="auth-form" id="codeForm" hidden>
+        <label for="code">Code</label>
+        <div class="auth-row">
+          <input id="code" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="123456" maxlength="6" required>
+          <button type="submit">Enter</button>
         </div>
-      </div>
-    </section>
+      </form>
 
-    <section class="market-workspace" aria-label="Market prices">
-      <div class="category-list" aria-label="Categories">
-        <div class="panel-head">
-          <span>Category</span>
-          <span>Price</span>
-        </div>
-        <div id="categoryList"></div>
-      </div>
-
-      <aside class="detail-panel" aria-label="Category detail">
-        <div class="panel-head">
-          <span>Detail</span>
-          <span id="detailCategory">--</span>
-        </div>
-
-        <div class="detail-summary">
-          <div class="summary-item">
-            <span>Price</span>
-            <strong id="detailPrice">--</strong>
-          </div>
-          <div class="summary-item">
-            <span>1 day</span>
-            <strong id="detailDay">--</strong>
-          </div>
-          <div class="summary-item">
-            <span>3 months</span>
-            <strong id="detailThreeMonths">--</strong>
-          </div>
-        </div>
-
-        <table class="product-table">
-          <colgroup>
-            <col class="product-col">
-            <col class="price-col">
-            <col class="change-col">
-            <col class="change-col">
-          </colgroup>
-          <thead>
-            <tr>
-              <th scope="col">Product</th>
-              <th scope="col">Price</th>
-              <th scope="col">1 day</th>
-              <th scope="col">3 months</th>
-            </tr>
-          </thead>
-          <tbody id="productRows"></tbody>
-        </table>
-
-        <div class="meta-row">
-          <span id="nextUpdateBottom"></span>
-        </div>
-      </aside>
+      <p class="auth-status" id="authStatus" role="status" aria-live="polite"></p>
     </section>
   </main>
 
-  <footer class="footer" role="contentinfo">
-    <div class="footer-left">
-      <p>&copy; 2025 · E. Lagarda</p>
-    </div>
+  <div id="appShell" hidden>
+    <!-- aquí va tu web actual completa -->
+    <header class="header" role="banner">
+      <div class="header-content">
+        <div class="header-text">
+          <h1>Nuts Price Insights</h1>
+          <p class="subtitle">From data to decisions</p>
+        </div>
+        <div class="next-update-top" id="topUpdate"></div>
+      </div>
+    </header>
 
-    <div class="footer-right">
-      <p class="disclaimer">
-        The prices displayed on this website are provided solely as indicative
-        price signals reflecting general market conditions and are intended
-        for statistical and informational purposes only.
+    <main role="main" class="main-content">
+      <section class="chart-section" aria-labelledby="productTitle">
+        <div class="card chart-card">
+          <div class="price-container">
+            <div class="price-left">
+              <h2 id="productTitle" class="product-title">Loading...</h2>
+              <div class="price" id="productPrice">--</div>
+              <div class="change neutral" id="productChange">--</div>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="currencyChart"></canvas>
+          </div>
+        </div>
+      </section>
 
-        Under no circumstances shall they be construed as firm, binding,
-        or contractual offers.
+      <section class="market-workspace">
+        <div class="category-list">
+          <div class="panel-head">
+            <span>Category</span>
+            <span>Price</span>
+          </div>
+          <div id="categoryList"></div>
+        </div>
 
-        The indicated prices are derived from information gathered from
-        various publicly available and industry-relevant sources.
+        <aside class="detail-panel">
+          <div class="panel-head">
+            <span>Detail</span>
+            <span id="detailCategory">--</span>
+          </div>
 
-        While reasonable efforts are made to ensure accuracy, no representation
-        or warranty is given as to the completeness, reliability, or timeliness
-        of such information.
+          <div class="detail-summary">
+            <div class="summary-item">
+              <span>Price</span>
+              <strong id="detailPrice">--</strong>
+            </div>
+            <div class="summary-item">
+              <span>1 day</span>
+              <strong id="detailDay">--</strong>
+            </div>
+            <div class="summary-item">
+              <span>3 months</span>
+              <strong id="detailThreeMonths">--</strong>
+            </div>
+          </div>
 
-        These prices do not take into account specific conditions related to
-        product availability, logistics, contractual volumes, quality
-        specifications, or individual payment terms, all of which may have a
-        material impact on actual commercial offers.
+          <table class="product-table">
+            <colgroup>
+              <col class="product-col">
+              <col class="price-col">
+              <col class="change-col">
+              <col class="change-col">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>1 day</th>
+                <th>3 months</th>
+              </tr>
+            </thead>
+            <tbody id="productRows"></tbody>
+          </table>
 
-        Users should conduct their own market research and consult with
-        industry professionals before making any commercial decisions.
-      </p>
+          <div class="meta-row">
+            <span id="nextUpdateBottom"></span>
+          </div>
+        </aside>
+      </section>
+    </main>
 
-      <p class="disclaimer">
-        Pistachio quality grades have been established according to the
-        <a
-          class="footer-inline-link"
-          href="APG-US-Standards-for-Grades-of-Pistachio-Nuts_Brochure_AUG-26-15.zip_.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          APG US Standards for Grades of Pistachio Nuts
-        </a>.
-      </p>
+    <footer class="footer" role="contentinfo">
+      <div class="footer-left">
+        <p>&copy; 2025 · E. Lagarda</p>
+      </div>
 
-      <p class="disclaimer">
-        I love nuts, not sure about the vice-versa.
-      </p>
-    </div>
-  </footer>
+      <div class="footer-right">
+        <p class="disclaimer">
+          The prices displayed on this website are provided solely as indicative
+          price signals reflecting general market conditions and are intended
+          for statistical and informational purposes only.
+        </p>
+
+        <p class="disclaimer">
+          Pistachio quality grades have been established according to the
+          <a class="footer-inline-link"
+             href="APG-US-Standards-for-Grades-of-Pistachio-Nuts_Brochure_AUG-26-15.zip_.pdf"
+             target="_blank"
+             rel="noopener noreferrer">
+            APG US Standards for Grades of Pistachio Nuts
+          </a>.
+        </p>
+
+        <p class="disclaimer">
+          I love nuts, not sure about the vice-versa.
+        </p>
+      </div>
+    </footer>
+  </div>
 
   <script src="app.js"></script>
 </body>
