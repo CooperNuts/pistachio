@@ -22,8 +22,102 @@ let dataByTable = {};
 let currentCategory = null;
 let activeTicker = null;
 let chart = null;
+let marketDataLoaded = false;
+let pendingEmail = "";
+let accessToken = SUPABASE_KEY;
+
+const supabaseClient = window.supabase?.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 window.addEventListener("DOMContentLoaded", async () => {
+  setupAuth();
+});
+
+async function setupAuth() {
+  const authScreen = document.getElementById("authScreen");
+  const appShell = document.getElementById("appShell");
+  const emailForm = document.getElementById("emailForm");
+  const codeForm = document.getElementById("codeForm");
+  const emailInput = document.getElementById("email");
+  const codeInput = document.getElementById("code");
+
+  if (!supabaseClient) {
+    setAuthStatus("Unable to load access service. Please refresh the page.", "error");
+    return;
+  }
+
+  const { data } = await supabaseClient.auth.getSession();
+
+  if (data.session) {
+    accessToken = data.session.access_token;
+    showApp(authScreen, appShell);
+    await initMarketData();
+    return;
+  }
+
+  authScreen.hidden = false;
+  appShell.hidden = true;
+
+  emailForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    pendingEmail = emailInput.value.trim();
+    setAuthStatus("Sending code...");
+
+    const { error } = await supabaseClient.auth.signInWithOtp({
+      email: pendingEmail,
+      options: {
+        shouldCreateUser: true
+      }
+    });
+
+    if (error) {
+      setAuthStatus(error.message, "error");
+      return;
+    }
+
+    emailForm.hidden = true;
+    codeForm.hidden = false;
+    codeInput.focus();
+    setAuthStatus("Code sent. Check your email.", "ok");
+  });
+
+  codeForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    setAuthStatus("Checking code...");
+
+    const { data: verifyData, error } = await supabaseClient.auth.verifyOtp({
+      email: pendingEmail,
+      token: codeInput.value.trim(),
+      type: "email"
+    });
+
+    if (error) {
+      setAuthStatus(error.message, "error");
+      return;
+    }
+
+    accessToken = verifyData.session?.access_token || SUPABASE_KEY;
+    showApp(authScreen, appShell);
+    await initMarketData();
+  });
+}
+
+function showApp(authScreen, appShell) {
+  authScreen.hidden = true;
+  appShell.hidden = false;
+}
+
+function setAuthStatus(message, type = "") {
+  const status = document.getElementById("authStatus");
+  status.textContent = message;
+  status.className = `auth-status ${type}`;
+}
+
+async function initMarketData() {
+  if (marketDataLoaded) return;
+
   if (typeof Chart === "undefined") {
     console.error("Chart.js not loaded");
     return;
@@ -40,17 +134,18 @@ window.addEventListener("DOMContentLoaded", async () => {
     currentCategory = productOrder[0];
     activeTicker = products[currentCategory].tickers[0];
     selectCategory(currentCategory);
+    marketDataLoaded = true;
   } catch (error) {
     console.error(error);
     document.getElementById("productTitle").textContent =
       "Unable to load market data";
   }
-});
+}
 
 function headers() {
   return {
     apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${SUPABASE_KEY}`,
+    Authorization: `Bearer ${accessToken}`,
     "Content-Type": "application/json",
     Prefer: "return=representation"
   };
