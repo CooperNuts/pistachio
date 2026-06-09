@@ -19,7 +19,140 @@
   </script>
 
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    [hidden] {
+      display: none !important;
+    }
+
+    .auth-screen {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .auth-card {
+      width: min(100%, 520px);
+      padding: 34px;
+      border: 1px solid rgba(0, 0, 0, 0.07);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 24px 60px rgba(20, 22, 24, 0.08);
+    }
+
+    .auth-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 34px;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .auth-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(22, 23, 24, 0.14);
+      border-radius: 50%;
+      background: linear-gradient(145deg, #ffffff, #ece8df);
+      font-size: 15px;
+    }
+
+    .auth-card h1 {
+      margin: 0;
+      max-width: 10em;
+      font-size: clamp(32px, 4.5vw, 44px);
+      line-height: 1.05;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .auth-card p {
+      margin: 18px 0 0;
+      color: #6b7280;
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .auth-form label {
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .auth-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+    }
+
+    .auth-row input {
+      min-width: 0;
+      height: 48px;
+      border: 1px solid rgba(0, 0, 0, 0.07);
+      border-radius: 999px;
+      padding: 0 17px;
+      background: rgba(255, 255, 255, 0.94);
+      color: #111827;
+      font: inherit;
+      outline: none;
+    }
+
+    .auth-row input:focus {
+      border-color: rgba(17, 24, 39, 0.3);
+      box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.06);
+    }
+
+    .auth-row button {
+      height: 48px;
+      border: 0;
+      border-radius: 999px;
+      padding: 0 22px;
+      background: #111827;
+      color: white;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .auth-status {
+      min-height: 22px;
+      margin-top: 16px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .auth-status.ok {
+      color: #16784f;
+    }
+
+    .auth-status.error {
+      color: #8f2f2b;
+    }
+
+    @media (max-width: 560px) {
+      .auth-card {
+        padding: 24px;
+      }
+
+      .auth-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
+
 <body>
   <main class="auth-screen" id="authScreen" aria-labelledby="authTitle">
     <section class="auth-card">
@@ -52,13 +185,13 @@
   </main>
 
   <div id="appShell" hidden>
-    <!-- aquí va tu web actual completa -->
     <header class="header" role="banner">
       <div class="header-content">
         <div class="header-text">
           <h1>Nuts Price Insights</h1>
           <p class="subtitle">From data to decisions</p>
         </div>
+
         <div class="next-update-top" id="topUpdate"></div>
       </div>
     </header>
@@ -70,17 +203,18 @@
             <div class="price-left">
               <h2 id="productTitle" class="product-title">Loading...</h2>
               <div class="price" id="productPrice">--</div>
-              <div class="change neutral" id="productChange">--</div>
+              <div class="change neutral" id="productChange" role="status" aria-live="polite">--</div>
             </div>
           </div>
+
           <div class="chart-wrapper">
-            <canvas id="currencyChart"></canvas>
+            <canvas id="currencyChart" role="img" aria-label="Nuts price chart"></canvas>
           </div>
         </div>
       </section>
 
-      <section class="market-workspace">
-        <div class="category-list">
+      <section class="market-workspace" aria-label="Market prices">
+        <div class="category-list" aria-label="Categories">
           <div class="panel-head">
             <span>Category</span>
             <span>Price</span>
@@ -88,7 +222,7 @@
           <div id="categoryList"></div>
         </div>
 
-        <aside class="detail-panel">
+        <aside class="detail-panel" aria-label="Category detail">
           <div class="panel-head">
             <span>Detail</span>
             <span id="detailCategory">--</span>
@@ -118,10 +252,10 @@
             </colgroup>
             <thead>
               <tr>
-                <th>Product</th>
-                <th>Price</th>
-                <th>1 day</th>
-                <th>3 months</th>
+                <th scope="col">Product</th>
+                <th scope="col">Price</th>
+                <th scope="col">1 day</th>
+                <th scope="col">3 months</th>
               </tr>
             </thead>
             <tbody id="productRows"></tbody>
@@ -144,14 +278,34 @@
           The prices displayed on this website are provided solely as indicative
           price signals reflecting general market conditions and are intended
           for statistical and informational purposes only.
+
+          Under no circumstances shall they be construed as firm, binding,
+          or contractual offers.
+
+          The indicated prices are derived from information gathered from
+          various publicly available and industry-relevant sources.
+
+          While reasonable efforts are made to ensure accuracy, no representation
+          or warranty is given as to the completeness, reliability, or timeliness
+          of such information.
+
+          These prices do not take into account specific conditions related to
+          product availability, logistics, contractual volumes, quality
+          specifications, or individual payment terms, all of which may have a
+          material impact on actual commercial offers.
+
+          Users should conduct their own market research and consult with
+          industry professionals before making any commercial decisions.
         </p>
 
         <p class="disclaimer">
           Pistachio quality grades have been established according to the
-          <a class="footer-inline-link"
-             href="APG-US-Standards-for-Grades-of-Pistachio-Nuts_Brochure_AUG-26-15.zip_.pdf"
-             target="_blank"
-             rel="noopener noreferrer">
+          <a
+            class="footer-inline-link"
+            href="APG-US-Standards-for-Grades-of-Pistachio-Nuts_Brochure_AUG-26-15.zip_.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             APG US Standards for Grades of Pistachio Nuts
           </a>.
         </p>
