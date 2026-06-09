@@ -38,8 +38,124 @@ body {
   overflow-x: hidden;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 button {
   font: inherit;
+}
+
+.auth-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.auth-card {
+  width: min(100%, 520px);
+  padding: 34px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-lg);
+}
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 34px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.auth-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(22, 23, 24, 0.14);
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ffffff, #ece8df);
+  font-size: 15px;
+}
+
+.auth-card h1 {
+  max-width: 10em;
+  font-size: clamp(32px, 4.5vw, 44px);
+  line-height: 1.05;
+}
+
+.auth-card p {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.auth-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.auth-form label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.auth-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.auth-row input {
+  min-width: 0;
+  height: 48px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0 17px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--text);
+  font: inherit;
+  outline: none;
+}
+
+.auth-row input:focus {
+  border-color: rgba(17, 24, 39, 0.3);
+  box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.06);
+}
+
+.auth-row button {
+  height: 48px;
+  border: 0;
+  border-radius: 999px;
+  padding: 0 22px;
+  background: var(--text);
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.auth-status {
+  min-height: 22px;
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.auth-status.ok {
+  color: var(--green);
+}
+
+.auth-status.error {
+  color: #8f2f2b;
 }
 
 h1,
@@ -597,6 +713,14 @@ tbody tr:last-child td {
   .footer {
     grid-template-columns: 1fr;
     gap: 20px;
+  }
+
+  .auth-card {
+    padding: 24px;
+  }
+
+  .auth-row {
+    grid-template-columns: 1fr;
   }
 }
 
