@@ -63,6 +63,9 @@ function currentTheme() {
 
 function setTheme(theme) {
   document.documentElement.dataset.theme = theme;
+  document
+    .querySelector('meta[name="theme-color"]')
+    ?.setAttribute("content", theme === "dark" ? "#000000" : "#ffffff");
 
   const toggleText = document.getElementById("themeToggleText");
 
@@ -79,12 +82,12 @@ function chartPalette() {
     tooltipTitle: dark ? "#f5f5f7" : "#111827",
     tooltipBody: dark ? "#c7c7cc" : "#374151",
     tooltipBorder: dark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.06)",
-    xTick: dark ? "rgba(245,245,247,0.48)" : "#9ca3af",
-    yTick: dark ? "rgba(245,245,247,0.56)" : "#6b7280",
-    yLeftTick: dark ? "rgba(245,245,247,0.26)" : "rgba(17,24,39,0.25)",
-    grid: dark ? "rgba(255,255,255,0.075)" : "rgba(0,0,0,0.05)",
-    stock: dark ? "rgba(255,255,255,0.045)" : "rgba(17,24,39,0.06)",
-    average: dark ? "rgba(245,245,247,0.28)" : "rgba(17,24,39,0.24)"
+    xTick: dark ? "rgba(245,245,247,0.58)" : "rgba(17,24,39,0.42)",
+    yTick: dark ? "rgba(245,245,247,0.62)" : "rgba(17,24,39,0.56)",
+    yLeftTick: dark ? "rgba(245,245,247,0.34)" : "rgba(17,24,39,0.28)",
+    grid: dark ? "rgba(255,255,255,0.085)" : "rgba(17,24,39,0.055)",
+    stock: dark ? "rgba(245,245,247,0.105)" : "rgba(17,24,39,0.075)",
+    average: dark ? "rgba(245,245,247,0.34)" : "rgba(17,24,39,0.24)"
   };
 }
 
@@ -105,6 +108,14 @@ function applyChartTheme(shouldUpdate = true) {
   chart.data.datasets.forEach((dataset) => {
     if (dataset.type === "bar") {
       dataset.backgroundColor = palette.stock;
+    }
+
+    if (dataset.baseColor) {
+      dataset.borderColor = chartLineColor(dataset.baseColor);
+      dataset.pointHoverBackgroundColor = chartLineColor(dataset.baseColor);
+      dataset.pointHoverBorderColor = currentTheme() === "dark"
+        ? "#050505"
+        : "#ffffff";
     }
 
     if (dataset.label === "Moving Average") {
@@ -563,11 +574,15 @@ function updateChart(product, ticker) {
   chart.data.datasets.push({
     label: ticker.short || ticker.name,
     data: rawValues,
+    baseColor: ticker.color,
     borderColor: chartLineColor(ticker.color),
     borderWidth: 2.0,
     pointRadius: 0,
     pointHoverRadius: 4,
     pointHitRadius: 12,
+    pointHoverBackgroundColor: chartLineColor(ticker.color),
+    pointHoverBorderColor: currentTheme() === "dark" ? "#050505" : "#ffffff",
+    pointHoverBorderWidth: 2,
     tension: 0,
     fill: false,
     order: 1
@@ -596,10 +611,10 @@ function updateChart(product, ticker) {
 
 function chartLineColor(color) {
   if (currentTheme() !== "dark") {
-    return color;
+    return darkenColor(color || "#111827", 8);
   }
 
-  return lightenColor(color || "#111827", 34);
+  return lightenColor(color || "#111827", 18);
 }
 
 function buildAnnotations(product, labels, rawValues) {
@@ -773,6 +788,19 @@ function lightenColor(hex, percent) {
   const r = Math.min(255, (number >> 16) + amount);
   const g = Math.min(255, ((number >> 8) & 0x00ff) + amount);
   const b = Math.min(255, (number & 0x0000ff) + amount);
+
+  return `#${(0x1000000 + r * 0x10000 + g * 0x100 + b)
+    .toString(16)
+    .slice(1)}`;
+}
+
+function darkenColor(hex, percent) {
+  const normalized = hex.replace("#", "");
+  const number = parseInt(normalized, 16);
+  const amount = Math.round(2.55 * percent);
+  const r = Math.max(0, (number >> 16) - amount);
+  const g = Math.max(0, ((number >> 8) & 0x00ff) - amount);
+  const b = Math.max(0, (number & 0x0000ff) - amount);
 
   return `#${(0x1000000 + r * 0x10000 + g * 0x100 + b)
     .toString(16)
