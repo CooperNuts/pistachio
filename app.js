@@ -32,8 +32,90 @@ const supabaseClient = window.supabase?.createClient(
 );
 
 window.addEventListener("DOMContentLoaded", async () => {
+  setupTheme();
   setupAuth();
 });
+
+function setupTheme() {
+  const savedTheme = localStorage.getItem("allnuts-theme") || "dark";
+  setTheme(savedTheme);
+
+  const toggle = document.getElementById("themeToggle");
+
+  if (!toggle) return;
+
+  toggle.addEventListener("click", () => {
+    const nextTheme = currentTheme() === "dark" ? "light" : "dark";
+    setTheme(nextTheme);
+    localStorage.setItem("allnuts-theme", nextTheme);
+
+    if (currentCategory && activeTicker && products[currentCategory]) {
+      renderSelectedTicker(products[currentCategory], activeTicker);
+    } else {
+      applyChartTheme();
+    }
+  });
+}
+
+function currentTheme() {
+  return document.documentElement.dataset.theme || "dark";
+}
+
+function setTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+
+  const toggleText = document.getElementById("themeToggleText");
+
+  if (toggleText) {
+    toggleText.textContent = theme === "dark" ? "Light" : "Dark";
+  }
+}
+
+function chartPalette() {
+  const dark = currentTheme() === "dark";
+
+  return {
+    tooltipBg: dark ? "rgba(29,29,31,0.98)" : "rgba(255,255,255,0.98)",
+    tooltipTitle: dark ? "#f5f5f7" : "#111827",
+    tooltipBody: dark ? "#c7c7cc" : "#374151",
+    tooltipBorder: dark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.06)",
+    xTick: dark ? "rgba(245,245,247,0.48)" : "#9ca3af",
+    yTick: dark ? "rgba(245,245,247,0.56)" : "#6b7280",
+    yLeftTick: dark ? "rgba(245,245,247,0.26)" : "rgba(17,24,39,0.25)",
+    grid: dark ? "rgba(255,255,255,0.075)" : "rgba(0,0,0,0.05)",
+    stock: dark ? "rgba(255,255,255,0.045)" : "rgba(17,24,39,0.06)",
+    average: dark ? "rgba(245,245,247,0.28)" : "rgba(17,24,39,0.24)"
+  };
+}
+
+function applyChartTheme(shouldUpdate = true) {
+  if (!chart) return;
+
+  const palette = chartPalette();
+
+  chart.options.plugins.tooltip.backgroundColor = palette.tooltipBg;
+  chart.options.plugins.tooltip.titleColor = palette.tooltipTitle;
+  chart.options.plugins.tooltip.bodyColor = palette.tooltipBody;
+  chart.options.plugins.tooltip.borderColor = palette.tooltipBorder;
+  chart.options.scales.x.ticks.color = palette.xTick;
+  chart.options.scales.y.grid.color = palette.grid;
+  chart.options.scales.y.ticks.color = palette.yTick;
+  chart.options.scales.yLeft.ticks.color = palette.yLeftTick;
+
+  chart.data.datasets.forEach((dataset) => {
+    if (dataset.type === "bar") {
+      dataset.backgroundColor = palette.stock;
+    }
+
+    if (dataset.label === "Moving Average") {
+      dataset.borderColor = palette.average;
+    }
+  });
+
+  if (shouldUpdate) {
+    chart.update();
+  }
+}
 
 async function setupAuth() {
   const authScreen = document.getElementById("authScreen");
@@ -228,6 +310,7 @@ async function fetchPriceTable(tableName) {
 function setupChart() {
   const canvas = document.getElementById("currencyChart");
   const ctx = canvas.getContext("2d");
+  const palette = chartPalette();
 
   chart = new Chart(ctx, {
     type: "line",
@@ -250,10 +333,10 @@ function setupChart() {
           display: false
         },
         tooltip: {
-          backgroundColor: "rgba(255,255,255,0.98)",
-          titleColor: "#111827",
-          bodyColor: "#374151",
-          borderColor: "rgba(0,0,0,0.06)",
+          backgroundColor: palette.tooltipBg,
+          titleColor: palette.tooltipTitle,
+          bodyColor: palette.tooltipBody,
+          borderColor: palette.tooltipBorder,
           borderWidth: 0.8,
           padding: 14,
           displayColors: true,
@@ -274,10 +357,10 @@ function setupChart() {
             display: false
           },
           ticks: {
-            color: "#9ca3af",
+            color: palette.xTick,
             autoSkip: false,
             callback: function(value, index) {
-              return index % 60 === 0
+              return index % 45 === 0
                 ? formatAxisDate(this.getLabelForValue(value))
                 : "";
             },
@@ -289,13 +372,13 @@ function setupChart() {
           position: "right",
           grace: "10%",
           grid: {
-            color: "rgba(0,0,0,0.05)"
+            color: palette.grid
           },
           border: {
             display: false
           },
           ticks: {
-            color: "#6b7280",
+            color: palette.yTick,
             stepSize: 0.05,
             callback: (value) => Number(value).toFixed(2)
           }
@@ -311,7 +394,7 @@ function setupChart() {
             display: false
           },
           ticks: {
-            color: "rgba(17,24,39,0.25)",
+            color: palette.yLeftTick,
             callback: (value) => `${Number(value) / 1000}k`
           }
         }
@@ -435,6 +518,7 @@ function renderSelectedTicker(product, ticker) {
 
 function updateChart(product, ticker) {
   const data = dataByTable[product.table] || [];
+  const palette = chartPalette();
 
   const labels = data.map((row) => row.fecha);
   const rawValues = data.map((row) => {
@@ -470,7 +554,7 @@ function updateChart(product, ticker) {
       label: "Stock MT",
       data: stockValues,
       yAxisID: "yLeft",
-      backgroundColor: "rgba(17,24,39,0.06)",
+      backgroundColor: palette.stock,
       borderWidth: 0,
       order: 3
     });
@@ -479,7 +563,7 @@ function updateChart(product, ticker) {
   chart.data.datasets.push({
     label: ticker.short || ticker.name,
     data: rawValues,
-    borderColor: ticker.color,
+    borderColor: chartLineColor(ticker.color),
     borderWidth: 2.0,
     pointRadius: 0,
     pointHoverRadius: 4,
@@ -492,7 +576,7 @@ function updateChart(product, ticker) {
   chart.data.datasets.push({
     label: "Moving Average",
     data: movingAverage,
-    borderColor: "rgba(17,24,39,0.24)",
+    borderColor: palette.average,
     borderWidth: 2,
     pointRadius: 0,
     pointHoverRadius: 0,
@@ -506,7 +590,16 @@ function updateChart(product, ticker) {
     annotations: buildAnnotations(product, labels, rawValues)
   };
 
+  applyChartTheme(false);
   chart.update();
+}
+
+function chartLineColor(color) {
+  if (currentTheme() !== "dark") {
+    return color;
+  }
+
+  return lightenColor(color || "#111827", 34);
 }
 
 function buildAnnotations(product, labels, rawValues) {
