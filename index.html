@@ -17,6 +17,10 @@
   <script>
     Chart.register(annotationPlugin);
   </script>
+  <script>
+    document.documentElement.dataset.theme =
+      localStorage.getItem("allnuts-theme") || "dark";
+  </script>
 
   <link rel="stylesheet" href="style.css">
 
@@ -192,7 +196,12 @@
           <p class="subtitle">From data to decisions</p>
         </div>
 
-        <div class="next-update-top" id="topUpdate"></div>
+        <div class="header-actions">
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch color theme">
+            <span id="themeToggleText">Light</span>
+          </button>
+          <div class="next-update-top" id="topUpdate"></div>
+        </div>
       </div>
     </header>
 
