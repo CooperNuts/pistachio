@@ -784,8 +784,8 @@ html[data-theme="dark"] body {
 
 html[data-theme="light"] body {
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.96), transparent 34rem),
-    linear-gradient(135deg, #fbfaf7 0%, var(--bg) 46%, #f2f4f1 100%);
+    radial-gradient(circle at 50% -12%, rgba(255, 255, 255, 0.98), transparent 34rem),
+    linear-gradient(180deg, #ffffff 0%, #f7f7f4 46%, #f2f4f1 100%);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -870,7 +870,7 @@ html[data-theme="dark"] .auth-row button {
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 0 14px;
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.86);
   color: var(--text);
   font-size: 12px;
   font-weight: 800;
@@ -890,6 +890,11 @@ html[data-theme="dark"] .auth-row button {
 html[data-theme="dark"] .theme-toggle {
   background: rgba(245, 245, 247, 0.08);
   color: var(--text);
+}
+
+html[data-theme="light"] .theme-toggle {
+  background: rgba(17, 24, 39, 0.045);
+  color: rgba(17, 24, 39, 0.78);
 }
 
 .main-content {
@@ -932,6 +937,10 @@ html[data-theme="dark"] .detail-panel {
 
 html[data-theme="light"] .chart-card {
   border-radius: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 24px 60px rgba(20, 22, 24, 0.075);
 }
 
 .price-container {
@@ -981,6 +990,12 @@ html[data-theme="dark"] .meta-row {
 html[data-theme="dark"] .chart-wrapper {
   background:
     radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.055), transparent 24rem),
+    transparent;
+}
+
+html[data-theme="light"] .chart-wrapper {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(17, 24, 39, 0.025), transparent 26rem),
     transparent;
 }
 
