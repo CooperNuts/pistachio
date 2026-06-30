@@ -260,18 +260,32 @@ p {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas:
-    "title price"
-    "title change";
+    "heading price"
+    "heading change";
   width: 100%;
   align-items: center;
   column-gap: 20px;
   row-gap: 6px;
 }
 
+.product-heading {
+  grid-area: heading;
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
 .product-title {
-  grid-area: title;
   color: var(--text);
   margin-bottom: 0;
+}
+
+.product-subtitle {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
 }
 
 .price {
@@ -1198,6 +1212,11 @@ th,
   font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.025em;
+}
+
+.product-subtitle {
+  max-width: 760px;
+  color: var(--muted);
 }
 
 .price {
