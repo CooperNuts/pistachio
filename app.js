@@ -509,7 +509,10 @@ function renderSelectedTicker(product, ticker) {
   const stats = statsFor(product, ticker);
 
   document.getElementById("productTitle").textContent =
-    `${product.title} · ${ticker.name}`;
+    product.title;
+
+  document.getElementById("productSubtitle").textContent =
+    ticker.name;
 
   document.getElementById("productPrice").textContent =
     stats.price;
