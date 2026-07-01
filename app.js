@@ -676,8 +676,12 @@ function statsFor(product, ticker) {
   const data = dataByTable[product.table] || [];
   const latest = data[0] || {};
   const previous = data[1] || latest;
-  const oldThreeMonths = data.length ? monthsBackRow(data, latest.fecha, 3) : latest;
-  const oldSixMonths = data.length ? monthsBackRow(data, latest.fecha, 6) : latest;
+  const oldThreeMonths = data.length
+    ? monthsBackRow(data, latest.fecha, 3, ticker.column)
+    : latest;
+  const oldSixMonths = data.length
+    ? monthsBackRow(data, latest.fecha, 6, ticker.column)
+    : latest;
   const value = Number(latest[ticker.column]);
   const previousValue = Number(previous[ticker.column]);
   const oldThreeMonthsValue = Number(oldThreeMonths[ticker.column]);
@@ -692,17 +696,24 @@ function statsFor(product, ticker) {
   };
 }
 
-function monthsBackRow(data, latestDate, months) {
+function monthsBackRow(data, latestDate, months, column) {
   const target = new Date(latestDate);
   target.setMonth(target.getMonth() - months);
 
+  const validRows = data.filter((row) => {
+    const rowTime = new Date(row.fecha).getTime();
+    const value = Number(row[column]);
+
+    return Number.isFinite(rowTime) && Number.isFinite(value);
+  });
+
   return (
-    data.reduce((best, row) => {
+    validRows.reduce((best, row) => {
       const rowTime = new Date(row.fecha).getTime();
       const bestTime = best ? new Date(best.fecha).getTime() : -Infinity;
 
       return rowTime <= target.getTime() && rowTime > bestTime ? row : best;
-    }, null) || data[data.length - 1]
+    }, null) || validRows[validRows.length - 1] || data[data.length - 1]
   );
 }
 
