@@ -1408,3 +1408,22 @@ html[data-theme="dark"] .price {
     font-size: 14px;
   }
 }
+
+/* Four metric layout: keeps 6 months aligned with the other detail metrics */
+.detail-summary {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+.summary-item {
+  min-width: 0;
+}
+
+.summary-item strong {
+  white-space: nowrap;
+}
+
+@media (max-width: 860px) {
+  .detail-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
