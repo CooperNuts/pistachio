@@ -469,6 +469,8 @@ function renderDetail(product, selectedTicker) {
     formatPercent(mainStats.day);
   document.getElementById("detailThreeMonths").textContent =
     formatPercent(mainStats.threeMonths);
+  document.getElementById("detailSixMonths").textContent =
+    formatPercent(mainStats.sixMonths);
 
   document.getElementById("productRows").innerHTML = product.tickers
     .map((ticker) => {
@@ -481,6 +483,7 @@ function renderDetail(product, selectedTicker) {
           <td class="price-cell">${stats.price}</td>
           <td><span class="chip ${chipClass(stats.day)}">${formatPercent(stats.day)}</span></td>
           <td class="price-cell">${formatPercent(stats.threeMonths)}</td>
+          <td class="price-cell">${formatPercent(stats.sixMonths)}</td>
         </tr>
       `;
     })
@@ -526,6 +529,8 @@ function renderSelectedTicker(product, ticker) {
     formatPercent(stats.day);
   document.getElementById("detailThreeMonths").textContent =
     formatPercent(stats.threeMonths);
+  document.getElementById("detailSixMonths").textContent =
+    formatPercent(stats.sixMonths);
 
   updateChart(product, ticker);
 }
@@ -671,22 +676,25 @@ function statsFor(product, ticker) {
   const data = dataByTable[product.table] || [];
   const latest = data[0] || {};
   const previous = data[1] || latest;
-  const old = data.length ? threeMonthsRow(data, latest.fecha) : latest;
+  const oldThreeMonths = data.length ? monthsBackRow(data, latest.fecha, 3) : latest;
+  const oldSixMonths = data.length ? monthsBackRow(data, latest.fecha, 6) : latest;
   const value = Number(latest[ticker.column]);
   const previousValue = Number(previous[ticker.column]);
-  const oldValue = Number(old[ticker.column]);
+  const oldThreeMonthsValue = Number(oldThreeMonths[ticker.column]);
+  const oldSixMonthsValue = Number(oldSixMonths[ticker.column]);
 
   return {
     value,
     day: percentChange(value, previousValue),
-    threeMonths: percentChange(value, oldValue),
+    threeMonths: percentChange(value, oldThreeMonthsValue),
+    sixMonths: percentChange(value, oldSixMonthsValue),
     price: `${formatNumber(value)} ${ticker.unit}`.trim()
   };
 }
 
-function threeMonthsRow(data, latestDate) {
+function monthsBackRow(data, latestDate, months) {
   const target = new Date(latestDate);
-  target.setMonth(target.getMonth() - 3);
+  target.setMonth(target.getMonth() - months);
 
   return (
     data.reduce((best, row) => {
