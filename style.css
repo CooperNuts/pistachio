@@ -431,7 +431,7 @@ p {
 
 .detail-summary {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   border-bottom: 1px solid var(--border);
 }
 
@@ -469,15 +469,15 @@ table {
 }
 
 col.product-col {
-  width: 46%;
+  width: 40%;
 }
 
 col.price-col {
-  width: 24%;
+  width: 22%;
 }
 
 col.change-col {
-  width: 15%;
+  width: 12.666%;
 }
 
 th {
@@ -683,12 +683,20 @@ tbody tr:last-child td {
   }
 
   .detail-summary {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .summary-item {
-    border-right: 0;
+    border-right: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
+  }
+
+  .summary-item:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .summary-item:nth-last-child(-n + 2) {
+    border-bottom: 0;
   }
 
   .summary-item:last-child {
