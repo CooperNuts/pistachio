@@ -86,7 +86,7 @@ function chartPalette() {
     yTick: dark ? "rgba(245,245,247,0.62)" : "rgba(17,24,39,0.56)",
     yLeftTick: dark ? "rgba(245,245,247,0.34)" : "rgba(17,24,39,0.28)",
     grid: dark ? "rgba(255,255,255,0.085)" : "rgba(17,24,39,0.055)",
-    stock: dark ? "rgba(245,245,247,0.07)" : "rgba(17,24,39,0.065)",
+    stock: "ffffff,
     average: dark ? "rgba(245,245,247,0.38)" : "rgba(17,24,39,0.24)"
   };
 }
